@@ -1,0 +1,93 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: hello-foo
+    app.kubernetes.io/instance: hello-foo
+  name: hello-foo-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-foo
+      app.kubernetes.io/instance: hello-foo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-foo
+        app.kubernetes.io/instance: hello-foo
+    spec:
+      containers:
+        - command:
+            - /agnhost
+            - netexec
+            - --http-port=8080
+          image: registry.k8s.io/e2e-test-images/agnhost:2.39
+          name: hello-foo-app
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: hello-bar
+    app.kubernetes.io/instance: hello-bar
+  name: hello-bar-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-bar
+      app.kubernetes.io/instance: hello-bar
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-bar
+        app.kubernetes.io/instance: hello-bar
+    spec:
+      containers:
+        - command:
+            - /agnhost
+            - netexec
+            - --http-port=8080
+          image: registry.k8s.io/e2e-test-images/agnhost:2.39
+          name: hello-bar-app
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: hello-baz
+    app.kubernetes.io/instance: hello-baz
+  name: hello-baz-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-baz
+      app.kubernetes.io/instance: hello-baz
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-baz
+        app.kubernetes.io/instance: hello-baz
+    spec:
+      containers:
+        - command:
+            - /agnhost
+            - netexec
+            - --http-port=8080
+          image: registry.k8s.io/e2e-test-images/agnhost:2.39
+          name: hello-baz-app
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP

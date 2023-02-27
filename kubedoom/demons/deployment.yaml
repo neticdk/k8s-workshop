@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demon-one
+  namespace: demons
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deployments-invader-one-app
+  template:
+    metadata:
+      labels:
+        app: deployments-invader-one-app
+    spec:
+      containers:
+        - name: alpine
+          image: mirror.gcr.io/library/alpine
+          command: ["sh", "-c", "tail -f /dev/null"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demon-two
+  namespace: demons
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deployments-invader-one-app
+  template:
+    metadata:
+      labels:
+        app: deployments-invader-one-app
+    spec:
+      containers:
+        - name: alpine
+          image: mirror.gcr.io/library/alpine
+          command: ["sh", "-c", "tail -f /dev/null"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demon-three
+  namespace: demons
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deployments-invader-one-app
+  template:
+    metadata:
+      labels:
+        app: deployments-invader-one-app
+    spec:
+      containers:
+        - name: alpine
+          image: mirror.gcr.io/library/alpine
+          command: ["sh", "-c", "tail -f /dev/null"]
