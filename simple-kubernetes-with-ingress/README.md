@@ -127,6 +127,8 @@ $ curl bar-127-0-0-1.nip.io/hostname
 $ curl baz-127-0-0-1.nip.io/hostname
 ```
 
+_Note_ the three domains (foo-127-0-0-1.nip.io, foo-127-0-0-1.nip.io, foo-127-0-0-1.nip.io) all resolve to `127.0.0.1` (i.e., localhost) but the ingress controller will route based on the http host header.
+
 # Workshop Intentions
 The intentions of this workshop was to convey som initial knowledge on working with kubernetes in a very simple way, the aim being to leave you with a bit of knowledge that will hopefully ignite your interest in kubernetes, as it is possible to work with it on your local machine. 
 
