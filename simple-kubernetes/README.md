@@ -139,7 +139,7 @@ We can use a short form for `namespaces` called `ns`
 $ kubectl get ns
 ```
 
-This will give us the same as above, we want to use that as a way to dive into the definion of a namespace:
+This will not give us the same as above, you have installed the former into the default namespqace, we want to use that as a way to dive into the definion of a namespace:
 
 ```bash
 $ kubectl get ns default -o yaml
@@ -213,7 +213,7 @@ or
 $ kubectl get all
 ```
 
-returns the same result.
+returns the same result, which means the two commands are equvalent.
 
 For the sake of completeness we can take a look at the other objects we have worked with sofar:
 
@@ -230,7 +230,7 @@ $ kubectl get deployment.apps/hello-app  -o yaml
 And do the same for the Service:
 
 ```bash
-$ kubectl get service/hello-app/hello-app  -o yaml
+$ kubectl get service/hello-app  -o yaml
 ```
 
 Whereas when you to do that for pods you can do it as this:
