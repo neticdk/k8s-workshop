@@ -103,6 +103,30 @@ $ curl localhost/hello-baz/hostname
 and see that it returns different names, which informs you that traffic is sent to different pods, i.e., the loadbalancing
 in the `baz` service balances across the pods.
 
+## Viurtual Hosting
+
+The above examples exposes the applications on the same hostname `localhost` routing the traffic based on the path of the
+http request (hello-foo, hello-bar, hello-baz). The same ingress controller can also distinguish requests based on the
+requested hostname. There is an example of this in the `multiple-domains` folder - take a look at the ingress resource.
+
+```console
+$ cat multiple-domains/ingress.yaml
+```
+
+and apply the specification:
+
+```console
+$ kubectl apply -f ./multiple-domains/ingress.yaml
+```
+
+Now check the response when calling using different hostnames:
+
+```console
+$ curl foo-127-0-0-1.nip.io/hostname
+$ curl bar-127-0-0-1.nip.io/hostname
+$ curl baz-127-0-0-1.nip.io/hostname
+```
+
 # Workshop Intentions
 The intentions of this workshop was to convey som initial knowledge on working with kubernetes in a very simple way, the aim being to leave you with a bit of knowledge that will hopefully ignite your interest in kubernetes, as it is possible to work with it on your local machine. 
 
