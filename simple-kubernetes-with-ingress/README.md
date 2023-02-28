@@ -7,7 +7,7 @@ We will use a kind cluster in this excercise, because it is easy to construct on
 Kind build on docker and thus you should have docker installed an running.
 
 ```console
-kind create cluster --name ingress --config=config.yaml
+$ kind create cluster --name ingress --config=config.yaml
 ```
 
 ## Install ingress controller

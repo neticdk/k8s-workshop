@@ -44,7 +44,7 @@ Password is `idbehold`
 ### Linux/Windows
 Linux and Windows requires a separate vnc client to conenct to the game.
 
-1. Install a vnc client, e.g., https://www.realvnc.com/en/connect/download/vnc/
+1. Install a vnc client, e.g., https://www.realvnc.com/en/connect/download/viewer/
 2. Connect to `localhost:5900`
 
 Password is `idbehold`

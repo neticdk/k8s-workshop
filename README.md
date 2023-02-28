@@ -119,11 +119,33 @@ brew install helm
 **choco**
 
 ```
-choco install helm
+choco install kubernetes-helm
 ```
 
 Alternate [Installing Helm](https://helm.sh/docs/intro/install/)
 
+
+## If you are using windows on your laptop
+There are some few thing that may work in a different way under windows.
+
+You may want to copy the lines from the shell scripts under each folder instead using the scripts:
+- create_cluster.sh which would be e.g. `kind create cluster --name workshop --config=kind-config.yaml`
+- delete_cluster.sh which would be e.g. `kind delete cluster --name workshop`
+when creating and deleting local clusters.
+
+The gatering of metrics in the observability workshop may not work for you, as grafana does not pick up the metrics.
+
+
+## If you experience an older kind kubernetes version
+You can add to the config yaml file, under nodes:
+```yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+- role: worker
+  image: kindest/node:v1.25.3
+```
 
 ## If you want to play more with Kubernetes
 [Kubernetes Playground](https://Kubernetes.io/docs/tutorials/kubernetes-basics/)
