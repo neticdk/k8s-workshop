@@ -72,6 +72,22 @@ distribution needs to be installed.
 
 See [Install Docker Engine](https://docs.docker.com/engine/install/).
 
+### Kubernetes CLI
+The `kubectl` cli allows access to interact with the Kubernetes cluster. This can be installed
+from package managers.
+
+**brew**
+
+```console
+$ brew install kubernetes-cli
+```
+
+**choco**
+
+```console
+$ choco install kubernetes-cli
+```
+
 ### Kubernetes in Docker (kind)
 
 We will be running a local Kubernetes cluster based on the Kubernetes distribution called
