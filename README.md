@@ -58,10 +58,10 @@ Material used in the workshop is based on different examples from github, articl
   - Lets get you signed up for Cloud Native Aalborg
   - Lets be sure you know where you get a coffe and a chat about Cloud Native and Kubernetes
   - Experiment with it yourself on your laptop ifo Kubernetes (there are a number of distributions and also some for you laptop)
-    - [Kubernetes](simple-Kubernetes)
-    - [ingress](simple-Kubernetes-with-ingress)
-    - [observability](observability)
-    - [kubedoom](kubedoom)
+    - [Kubernetes](./simple-kubernetes)
+    - [ingress](./simple-kubernetes-with-ingress)
+    - [observability](./observability)
+    - [kubedoom](./kubedoom)
   
 ## Prerequisites
 These are the things that you would have to install on your machine to run the examples.
