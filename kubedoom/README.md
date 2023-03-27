@@ -4,10 +4,9 @@ The [kubedoom](https://github.com/storax/kubedoom) is a fun way to show the
 self-healing capabilities of Kubernetes.
 
 ## Install
+Please ensure that you are in the `kubedoom`folder and startup cluster and install kubedoom following these steps.
 
-To startup cluster and install kubedoom follow these steps.
-
-1. Create local [kind](https://kind.sigs.k8s.io/) cluster - on *nix run `create_cluster.sh`
+1. Create local [kind](https://kind.sigs.k8s.io/) cluster - on *nix run `./create_cluster.sh`
 2. Deploy kubedoom
    ```console
    kubectl apply -k ./deploy
