@@ -398,6 +398,8 @@ Lets start creating the namespace, but before that let us take a look at a very 
 $ cat namespace.yaml 
 ```
 
+If you do not find the file, please switch to the `simple-kubernetes`folder.
+
 Which will look like this:
 
 ```yaml
