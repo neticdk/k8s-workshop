@@ -60,7 +60,7 @@ Note that there is a grafana service, a prometheus service and an alert manager 
 ## access grafana 
 ```console
 $ kubectl --namespace monitoring port-forward svc/grafana 3000
-````
+```
 
 http://localhost:3000
 Username: admin
@@ -70,7 +70,7 @@ Password: admin (which you have to change on first login please change to admin2
 ## access prometheus
 ```console
 $ kubectl --namespace monitoring port-forward svc/prometheus-k8s 9090
-````
+```
 
 http://localhost:9090
 
