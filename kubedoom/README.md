@@ -76,3 +76,8 @@ kubectl get pod -n demons --watch
 [Read more](https://opensource.com/article/21/6/kube-doom)
 
 Play away....
+
+## Clean up
+```console
+$ ./delete_cluster.sh
+```

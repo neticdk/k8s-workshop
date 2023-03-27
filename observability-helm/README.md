@@ -36,3 +36,8 @@ $ kubectl port-forward svc/oaas-observability-grafana 3000:80
 ```
 
 Go to http://localhost:3000 login is `admin` and password is `workshop`.
+
+## Clean up
+```console
+$ ./delete_cluster.sh
+```

@@ -106,3 +106,8 @@ Now there is data in the daskboards.
 ![alertmanager](alertmanager.png)
 
 [Read More](https://computingforgeeks.com/setup-prometheus-and-grafana-on-kubernetes/)
+
+## Clean up
+```console
+$ ./delete_cluster.sh
+```
