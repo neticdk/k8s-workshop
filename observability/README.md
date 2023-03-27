@@ -1,68 +1,64 @@
 # Install observability stack on kubernetes
-navigate to setup
 
-install namespace
-```bash
+In order to get started with this part of the workshop, please navigate to the `observability` folder
+
+Create the cluster for this part of the workshop:
+
+```console
+$ ./create_cluster.sh
+```
+
+Install namespace
+```console
 $ kubectl create -f ./namespace.yaml
 ```
-get the installed namespaces
-```bash
+Get the installed namespaces
+```console
 $ kubectl get namespaces
 ```
-get the installed namespaces using a short form
-```bash
-$ kubectl get ns
-```
-get the installed namespace for kubedoom
-
-```bash
-$ kubectl get ns kubedoom
-```
-describe the installed namespace for kubedoom
-```bash
-$ kubectl describe ns kubedoom
-```
-describe the installed namespace for kubedoom as yaml
-```bash
-$ kubectl get ns kubedoom -o yaml
-```
-List the contents of the previously installed namesapce declaration
-```bash
+List the contents of the previously installed namespace declaration
+```console
 $ cat namespace.yaml
 ```
-  > differences are runtime info added
 
 ## install operator
-```bash
+
+You may install everything in a folder using a declarative approach, here we install everything from the `setup` folder in one command
+```console
 $ kubectl create -f setup
 ```
-get the installed custom ressources 
-```bash
+Which installs a set of Custom Resource Defintitions or in short CRDs - if you want to see them, you can get the installed custom ressources by:
+```console
 $ kubectl get customresourcedefinition.apiextensions.k8s.io
 $ kubenctl get customresourcedefinition.apiextensions.k8s.io/alertmanagers.monitoring.coreos.com -o yaml
 ````
-describe one of the custom ressources 
-```bash
+
+And you may describe one of the custom ressources by: 
+```console
 $ kubectl describe customresourcedefinition.apiextensions.k8s.io/alertmanagers.monitoring.coreos.com
 ```
 
 ## install reminder
-```bash
+Now we have the CRDs installed and we are going to get the remaining components installed. These are e.g. prometheus (a metrics component), alertmanager (alerting component) and grafana (a visualizing tool).
+We use the same principle as above using the install from a folder called `install`
+```console
 $ kubectl create -f install
 ```
-
+Watch as the pods are created and gets ready, by looking for the pods and adding a `-w` which allows you to see as the pods get ready 
 ## check running pods
-```bash
+```console
 $ kubectl get pods -n monitoring -w
 ```
 
+At the time where all pods are running:
 ## check servises
-```bash
+```console
 $ kubectl get svc -n monitoring
 ```
+Note that there is a grafana service, a prometheus service and an alert manager service.
 
 ## access grafana 
-```bash
+```console
 $ kubectl --namespace monitoring port-forward svc/grafana 3000
 ````
 
@@ -72,14 +68,14 @@ Password: admin (which you have to change on first login please change to admin2
 
 
 ## access prometheus
-```bash
+```console
 $ kubectl --namespace monitoring port-forward svc/prometheus-k8s 9090
 ````
 
 http://localhost:9090
 
 ## access alertmanager
-```bash
+```console
 $ kubectl --namespace monitoring port-forward svc/alertmanager-main 9093
 ```
 http://localhost:9093
@@ -92,12 +88,12 @@ this is however just a workshop and thus we remove them instead of working with 
 If you are on windows, you may not experience the same results.
 
 ### check network policies
-```bash
+```console
 $ kubectl get networkpolicies
 ```
 
 ### get rid of them now
-```bash
+```console
 $ kubectl -n monitoring delete networkpolicies.networking.k8s.io --all
 ```
 
