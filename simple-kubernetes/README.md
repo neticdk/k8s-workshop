@@ -4,9 +4,9 @@ There are two fundamental ways to work with kubernetes:
  - the imperative way
  - the declarative way
 
-where the declarative way seems to be the way most peoiple want to work with it in a real life scenario.
+where the declarative way seems to be the way most people want to work with it in a real life scenario.
 
-The following examples will show both ways of working. Lets see the differences on the two...
+The following examples will show both ways of working. Lets see the differences between the two.
 
 # Create the cluster
 
@@ -21,7 +21,7 @@ $ docker version
 $ kind version
 ```
 
-This should tell you the `docker` and `kind` versions. Furthermore you may check if any clusters are already running.
+This should inform you about the `docker` and `kind` versions, furthermore you may check if any clusters are already running.
 
 ```console
 $ kind get clusters
@@ -67,12 +67,12 @@ $ kubectl --help
 
 ## Connectivity to the Cluster
 
-We havce used `kubectl` to retrieve information from the running cluster. It tursn out that
+We have used `kubectl` to retrieve information from the running cluster. It turns out that
 `kind` added entries into a default configuration for Kubernetes command line tooling such
 that the tooling may connect to the cluster.
 
-The `config` sub-commoand of `kubectl` can be used to view the configuration entries. The
-configuration may contain a number of different contexts and the one we are currently using
+The `config` sub-command of `kubectl` can be used to view the configuration entries. 
+The configuration may contain a number of different contexts and the one we are currently using
 can be found with:
 
 ```console
@@ -85,10 +85,10 @@ Btw. what other contexts do we have?
 $ kubectl config get-contexts
 ```
 
-Current context is normally in this workshop `kind`.
+Current context is normally in this workshop `kind-kind`.
 
 ```console
-$ kubectl config view | grep kind-workshop
+$ kubectl config view | grep kind-kind
 ```
 
 ## Expose the Application
@@ -132,14 +132,14 @@ $ kubectl get namespaces
 ```
 
 You see one of these namespaces is called "default", and if we do not specify anything concerning namespaces
-(and we did not) then everything which can go into a namesapce will go into that one.
+(and we did not) then that is the default place to do stuff. This means that everything we did, went into that namespace.
 
 We can use a short form for `namespaces` called `ns`
 ```bash
 $ kubectl get ns
 ```
 
-This will not give us the same as above, you have installed the former into the default namespqace, we want to use that as a way to dive into the definion of a namespace:
+There is a way to get the specification for the default namespace.
 
 ```bash
 $ kubectl get ns default -o yaml
@@ -168,6 +168,11 @@ status:
 For the fun of it we could create another one:
 ```bash
 $ kubectl create ns forthefunofit
+```
+
+and see that it is in the list of namespaces:
+
+```bash
 $ kubectl get ns
 ```
 
@@ -215,6 +220,8 @@ $ kubectl get all
 
 returns the same result, which means the two commands are equvalent.
 
+You can see a hello-app : pod, replicaset, deployment, service
+
 For the sake of completeness we can take a look at the other objects we have worked with sofar:
 
 ```bash
@@ -226,14 +233,16 @@ Or address the type and object in one single attribute:
 ```bash
 $ kubectl get deployment.apps/hello-app  -o yaml
 ```
+Tak a look at the YAML and see the replicas number equals 1, that it has metadata labels and that you can see the image from the initial deployment under spec image.
 
-And do the same for the Service:
+
+And you  can do the same for the Service:
 
 ```bash
 $ kubectl get service/hello-app  -o yaml
 ```
 
-Whereas when you to do that for pods you can do it as this:
+Whereas when you to do that for pods you can do it as this - starting to find the pods:
 
 ```bash
 $ kubectl get pods
@@ -252,6 +261,7 @@ Or in a single command like this:
 $ kubectl get pods $(kubectl get pods -template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}') -o yaml
 ```
 
+
 If you remember the output from the Deployment object, you may recall that there was a line stating something about replicas:
 ```bash
 $ kubectl get deployment.apps/hello-app -o jsonpath='{.spec.replicas}'
@@ -269,7 +279,7 @@ handling the replicas for the deployment:
 $  kubectl get rs
 ```
 
-Looking at the output from abovve you can see that:
+Looking at the output from above you can see that:
 ```console
 NAME                   DESIRED   CURRENT   READY   AGE
 hello-app-xxyyynnncd      1         1         1     7m
@@ -363,21 +373,22 @@ from the command line. We will now do the same in a declarative way, where the b
 configurations declared in files and kubectl is in this workshop used to push this information to the cluster.
 
 
-So why is that important? - we will have a lok at that in the next section in the declarative section.
+So why is that important? - we will have a look at that in the next section in the declarative section.
 
 # The declarative way
 
 The declarative way is, as mentioned earlier, when the objects used in kubernetes are specified (or declared) in files. In this section we 
-will use kubectl to "push" these definitions to Kubernetes. As such this may not seem in this context to be a major gamechanger, however
+will use kubectl to "push" these definitions to Kubernetes. As such this may not seem (in this context) to be a major gamechanger, however
 in a real-life scenario this allows you to have the declarations separated from the commands that make the cluster aware of the
-configurations it needs to deal with, and have them under version control. Having these declarations under version control gives you
-the ability to treat configurations as source code and thus use the same paradigms for the infrastructure as for the code. This is among
-other things full versioning, auditability, merge and conflict resolving, build and test of configurations. You can even use daemons
-inside the cluster to fetch changes from the version control system and "pull" that into the cluster, thus avoiding distribution of
-credentials with the ability to change things in the cluster instead protecting these inside the cluster. However this is a complete
-topic on its own - for another day - perhaps.
+configurations it needs to deal with, and have them under version control. 
+Having these declarations under version control gives you the ability to treat configurations as source code and thus use the same paradigms 
+for the infrastructure as for the code. This is among other things: full versioning, auditability, merge and conflict resolving, 
+build and test of configurations. 
+You can even use daemons inside the cluster to fetch changes from the version control system and "pull" that into the cluster, 
+thus avoiding distribution of credentials with the ability to change things in the cluster instead protecting these inside the cluster. 
+However this is a complete topic on its own - for another day - perhaps.
 
-In this workshop, we will work with the decalarative parts and just use kubectl to push the declarations to the cluster. We will be
+In this workshop, we will work with the declarative parts and just use kubectl to push the declarations to the cluster. We will be
 using quite a lot of the same checking commands as you have already seen above. One big difference is that we are going to
 deploy into a target namespace called "hello-workshop"
 
@@ -420,14 +431,13 @@ kube-system          Active   19m
 local-path-storage   Active   19m
 ```
 
-If we would delete the namespace we just created, that could be done like this
-***do not delete it as we shall be using it later***:
+If we would delete the namespace we just created, that could be done like this in the declarative way ***However - do not delete it as we shall be using it later***:
 
 ```bash
 $ kubectl delete -f ./namespace.yaml
 ```
 
-If we want to do the same for the "forthefunofit" this can be done like:
+If we want to do the same for the "forthefunofit" this can be done in a imperative way like:
 
 ```bash
 $ kubectl delete ns forthefunofit
@@ -447,7 +457,41 @@ local-path-storage   Active   19m
 
 Now we can create the same deployment as before by applying the deployment from `deployment.yaml`. Note that
 the namespace is already part of the specification in `deployment.yaml` and therefore the deployment ends up
-in the `hello-workshop` namespace.
+in the `hello-workshop` namespace. You can see that if you list the yaml file that contains the information for the deployment. 
+
+```bash
+cat ./deployment.yaml
+```
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hello-app
+  name: hello-app
+  namespace: hello-workshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-app
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: hello-app
+    spec:
+      containers:
+      - command:
+        - /agnhost
+        - netexec
+        - --http-port=8080
+        image: registry.k8s.io/e2e-test-images/agnhost:2.39
+        name: agnhost
+```
+
+If you look carefully, you can see the `hello-app` metadata namespace that it is targeted for the `hello-workshop`
 
 ```bash
 $ kubectl create -f ./deployment.yaml
@@ -619,7 +663,7 @@ spec:
   type: ClusterIP
 ```
 
-Let us create that(we leave the namespace on the command line out as it is specified in the declaration):
+Let us create that (we leave the namespace on the command line out as it is specified in the declaration):
 
 ```bash
 $ kubectl create -f ./service.yaml
@@ -704,11 +748,16 @@ You change the number of replica in the deployment yaml file as:
             image: registry.k8s.io/e2e-test-images/agnhost:2.39
         name: agnhost
 ```
+If you want to want the scaling, you can do the same as you did above for the imperative paradigm:
+
+```bash
+$ kubectl get rs -w -n hello-workshop
+```
 
 And then you apply that change to the cluster by using a kubectl apply:
 
 ```bash
-$ kubectl apply -f./deployment.yaml
+$ kubectl apply -f ./deployment.yaml
 ```
 
 And issue a:
@@ -843,6 +892,39 @@ Kubernetes consist of a number of building blocks, they are depicted in the sket
 ![kubernetes building blocks](./img/components-of-kubernetes.svg)
 The image is from [kubernetes.io, e.g.](https://kubernetes.io/docs/concepts/overview/components/)
 
+The simple cluster we have used is a single "node" cluster, where the cluster node is a docker container running on your local machine.
+
+```bash
+$ kubectl get nodes
+```
+
+which will show:
+
+```bash
+NAME                 STATUS   ROLES           AGE   VERSION
+kind-control-plane   Ready    control-plane   94m   v1.25.3
+```
+
+if you look for the docekre container constituting the node:
+
+```bash
+$ docker ps
+```
+You see that the "node" is:
+
+```bash
+CONTAINER ID   IMAGE                    COMMAND                  CREATED       STATUS       PORTS                       NAMES
+c90908d64ac9   kindest/node:v1.25.3     "/usr/local/bin/entr…"   2 hours ago   Up 2 hours   127.0.0.1:49189->6443/tcp   kind-control-plane
+```
+
+Normally you would have a multinode kubernetes clusters running, and typically in a pblic cloud that would be 3 control-plane nodes and 3,6 or 9 workernodes.
+
+If you go into the `multi-node-cluster` folder, you can do something very similar on your local maschine:
+
+```bash
+$ ./create_cluster.sh
+```
+
 The image shows a control-plane and 3 worker nodes, in our case we have a single control-plane and 2 worker nodes, which you may see
 if you execute:
 
@@ -850,11 +932,24 @@ if you execute:
 $ kubectl get nodes
 ```
 
+And from docker you can se them as:
+
+```bash
+$ docker ps
+```
+
+```bash
+CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS          PORTS                                                                 NAMES
+9ac953851bfe   kindest/node:v1.25.3   "/usr/local/bin/entr…"   44 seconds ago   Up 42 seconds                                                                         simple-multi-node-worker
+31acf909333d   kindest/node:v1.25.3   "/usr/local/bin/entr…"   44 seconds ago   Up 42 seconds                                                                         simple-multi-node-worker2
+009b0b4e2e9e   kindest/node:v1.25.3   "/usr/local/bin/entr…"   44 seconds ago   Up 42 seconds   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp, 127.0.0.1:50497->6443/tcp   simple-multi-node-control-plane
+```
+
 In a setup like this for a workshop 1 control-plane node and 2 worker nodes are more than enough, in a real production setup you would
 have 3, 5 or even 7 control-plane nodes and typically 3,6 or more by the factor of 3 nodes in a 3 Availability Zone setup, whereas in a
 dual setup you would go for 4 or more by a factor of 2. 
 
-If you want to have a view over "everything" thaht is running in the cluster you can do som by:
+If you want to have a view over "everything" that is running in the newly created cluster you can do so by:
 
 ```bash
 $ kubectl get all -A
@@ -866,10 +961,9 @@ This will show you the stuff like:
 - controller-manager (cm in the image) this controls e.g Node, Job, 
   `Node controller` is Responsible for noticing and responding when nodes go down.
   `Job controller`is Watching for Job objects that represent one-off tasks, then creates Pods to run those tasks to completion.
-  `EndpointSlice controller`populates EndpointSlice objects (to provide a link between Services and Pods), this is necessary for the knowledge of the  number fo pods "behind" the service.
+  `EndpointSlice controller`populates EndpointSlice objects (to provide a link between Services and Pods), this is necessary for the knowledge of the number fo pods "behind" the service.
 - kube-proxy proxies (k-proxy in the image) is a network proxy that runs on each node in your cluster, thus you see one for every node in the list.
 - kube-scheduler (sched in the image) lives in the control-plane and watches for newly created Pods with no assigned node, and make sure that a node is selected for them to run on
-
 
 ![nodes](./img/nodes.svg)
 
@@ -877,24 +971,39 @@ This will show you the stuff like:
 
 The images are from [kubernetes.io, e.g.]https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/)
 
+if you want, you can try to deploy the namespace 
 
-So which pod is running on which node:
+```bash
+$ kubectl create -f ../namespace.yaml
+```
+And the application:
+
+```bash
+$ kubectl create -f ../deployment.yaml
+```
+And possibly change the replicaset size to 4 and
+
+```bash
+$ kubectl apply -f ../deployment.yaml
+```
+
+And see which pod is running on which node:
 
 ```console
-$ kubectl get pods -o wide
+$ kubectl get pods -n hello-workshop -o wide
 ```
 
 Which lists the pods include some extra information.
 
 ```console
-NAME                         READY   STATUS    RESTARTS   AGE   IP            NODE                 NOMINATED NODE   READINESS GATES
-hello-app-57d9ccdbbc-fjw48   1/1     Running   0          4s    10.244.0.13   kind-control-plane   <none>           <none>
-hello-app-57d9ccdbbc-fq7xr   1/1     Running   0          12m   10.244.0.5    kind-control-plane   <none>           <none>
-hello-app-57d9ccdbbc-tfcd7   1/1     Running   0          4s    10.244.0.15   kind-control-plane   <none>           <none>
-hello-app-57d9ccdbbc-w9ql7   1/1     Running   0          4s    10.244.0.14   kind-control-plane   <none>           <none>
+NAME                         READY   STATUS    RESTARTS   AGE   IP            NODE                       NOMINATED NODE   READINESS GATES
+hello-app-57d9ccdbbc-fjw48   1/1     Running   0          4s    10.244.0.13   simple-multi-node-worker2  <none>           <none>
+hello-app-57d9ccdbbc-fq7xr   1/1     Running   0          12m   10.244.0.5    simple-multi-node-worker   <none>           <none>
+hello-app-57d9ccdbbc-tfcd7   1/1     Running   0          4s    10.244.0.15   simple-multi-node-worker2  <none>           <none>
+hello-app-57d9ccdbbc-w9ql7   1/1     Running   0          4s    10.244.0.14   simple-multi-node-worker   <none>           <none>
 ```
 
-You can do the same for the "default" namespace (where you had 4 replicas):
+If you had deployed that in the "default" namespace, the same would be displayed using:
 
 ```bash
 $ kubectl get pods -owide
@@ -903,6 +1012,19 @@ $ kubectl get pods -owide
 Earlier on we used a `port-forward` to send network traffic into the cluster. Even if we targetted a service resource the
 `port-forward` work by setting up a tunnel to a specific pod. Thus no load balancing will happen. A more production like
 Kubernetes setup needs an ingress setup and there is another workshop example covering [Kubernetes with ingress](../simple-kubernetes-with-ingress/README.md).
+
+### Clean up
+You can delete the initial custer by:
+
+```bash
+$ kind delete cluster
+```
+
+The latter multi node cluster can be deleted using:
+
+```bash
+$ ./delete_cluster.sh
+```
 
 # Workshop Intentions
 
