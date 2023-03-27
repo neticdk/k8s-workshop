@@ -1,10 +1,12 @@
 # Starting working with kubernetes and ingress 
 
-This just serves as an example of how to work with ingress on a local kubernetes
+This just serves as an example of how to work with ingress on a local kubernetes.
+
+Make sure your are in the right place in your file system, switch to the `simple-kubernetes-with-ingress`folder
  
 ## Create the cluster
 We will use a kind cluster in this excercise, because it is easy to construct on your local machine and very easy to tear down as well.
-Kind build on docker and thus you should have docker installed an running.
+Kind builds on docker and thus you should have docker installed an running.
 
 ```console
 $ kind create cluster --name ingress --config=config.yaml
@@ -12,9 +14,9 @@ $ kind create cluster --name ingress --config=config.yaml
 
 ## Install ingress controller
 
-A Kubernetes ingress controller is a reverse-proxy or layer 7 load balancer that is capable of handling network traffic
+A Kubernetes ingress controller is a reverse-proxy or layer 7 load balancer, that is capable of handling network traffic
 from outside of the cluster and route it to the pods inside of the cluster. Kubernetes contains an ingress resource type
-to specify ingress configuration but no ingress controllers are installed by default, as they may be specific for the
+to specify ingress configuration, but no ingress controllers are installed by default, as they may be specific for the
 infrastructures. Here we are running on a local machine and we will use nginx as ingress controller for this workshop example.
 
 To see what is actually contained in the definition of an ingress controller and install it:
@@ -34,16 +36,15 @@ In the remaining parts of the workshop we will just use the default namespace fo
 
 ## Install the applications
 
-Take a look at the applications, which are basically two deployments with one replica (pod) each and one deployment
-with 4 replicas.
+Take a look at the applications, which are basically two deployments with one replica (pod) each and one deployment with 4 replicas.
 
-```bash
+```console
 $ cat deployments.yaml 
 ```
 
 Progess to install these two application as:
 
-```bash
+```console
 $ kubectl create -f ./deployments.yaml
 ```
 
@@ -51,25 +52,25 @@ $ kubectl create -f ./deployments.yaml
 
 Take a look at the services, which are in front of the applications.
 
-```bash
+```console
 $ cat services.yaml 
 ```
 
 Then install the services.
 
-```bash
+```console
 $ kubectl create -f ./services.yaml
 ```
 
 ## Install the ingress for the services
 Take a look at the local ingress definition for the services, where you will find 3 definitions. Two of these for `foo` and `bar` and one to use in a while called `baz`.
 
-```bash
+```console
 $ cat ingress.yaml 
 ```
 Lets us install the ingress
 
-```bash
+```console
 $ kubectl create -f ./ingress.yaml
 ```
 
@@ -77,33 +78,43 @@ $ kubectl create -f ./ingress.yaml
 Now when you access the application it is possible to use the Ingress Controller and the Ingress to select between the two applications through the two services:
 
 To get the `hello-bar` application
-```bash
+```console
 $ curl localhost/hello-bar/hostname
 ```
 which takes you through the `hello-ingress` ingress to the `hello-bar-service` service to the `hello-bar-app` pod.
 
 To get the `hello-foo` application
-```bash
+```console
 $ curl localhost/hello-foo/hostname
 ```
 which takes you through the `hello-ingress` ingress to the `hello-foo-service` service to the `hello-foo-app` pod
 
 To get the `hello-baz` application 
-```bash
+```console
 $ curl localhost/hello-baz/hostname
 ```
 
 which takes you through the `hello-ingress` ingress through the `hello-baz-service` service to the `hello-baz-app` pods. The
 `hello-baz-app` deployment contains 4 replicas. Try calling the application several times using:
 
-```bash
+```console
 $ curl localhost/hello-baz/hostname
 ```
 
 and see that it returns different names, which informs you that traffic is sent to different pods, i.e., the loadbalancing
 in the `baz` service balances across the pods.
 
-## Viurtual Hosting
+```console
+$ kubectl get pods -o wide
+```
+
+Or if you want to see the baz app isolated:
+
+```console
+$ kubectl get pods -o wide | grep baz
+````
+
+## Virtual Hosting
 
 The above examples exposes the applications on the same hostname `localhost` routing the traffic based on the path of the
 http request (hello-foo, hello-bar, hello-baz). The same ingress controller can also distinguish requests based on the
