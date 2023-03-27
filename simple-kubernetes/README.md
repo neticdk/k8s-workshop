@@ -1008,7 +1008,7 @@ hello-app-57d9ccdbbc-w9ql7   1/1     Running   0          4s    10.244.0.14   si
 If you had deployed that in the "default" namespace, the same would be displayed using:
 
 ```bash
-$ kubectl get pods -owide
+$ kubectl get pods -o wide
 ```
 
 Earlier on we used a `port-forward` to send network traffic into the cluster. Even if we targetted a service resource the
