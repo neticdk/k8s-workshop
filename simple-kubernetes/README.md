@@ -10,11 +10,11 @@ The following examples will show both ways of working. Lets see the differences 
 
 # Create the cluster
 
-The main [README.md](../README.md) outllines the prerequisites to the examples. We will use [kind](https://kind.sigs.k8s.io/)
-in this example, because it is easy to use to construct a Kubernetes cluster on your localn machine and very easy to
+The main [README.md](../README.md) outlines the prerequisites to the examples. We will use [kind](https://kind.sigs.k8s.io/)
+in this example, because it is easy to use to construct a Kubernetes cluster on your local machine and very easy to
 tear down as well.
 
-You can check that you have the tools availeble running.
+You can check that you have the tools available running.
 
 ```console
 $ docker version
