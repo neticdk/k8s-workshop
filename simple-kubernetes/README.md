@@ -125,7 +125,7 @@ We used the command line to deploy an application and exposed that.
 There was a lot done behind the scenes we did not look into, e.g., the deployment was done
 into a particular "space" inside the cluster which is named `default`.
 
-This can be seem is you make the following call:
+This can be seen, if you make the following call:
 
 ```console
 $ kubectl get namespaces
@@ -927,7 +927,7 @@ If you go into the `multi-node-cluster` folder, you can do something very simila
 $ ./create_cluster.sh
 ```
 
-The image shows a control-plane and 3 worker nodes, in our case we have a single control-plane and 2 worker nodes, which you may see
+The image shows a control-plane and 2 worker nodes, in our case we have a single control-plane and 2 worker nodes, which you may see
 if you execute:
 
 ```console
