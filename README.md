@@ -54,15 +54,6 @@ Material used in the workshop is based on different examples from github, articl
   - Work someplace where they work with Kubernetes and other Cloud Native technologies are used for real (and secure) applications
   - Come join us, join us on our mission to make Kubernetes and Cloud Native available in a secure and easy manner for real applications
 
-- Lets start with what you can do in this room today
-  - Lets get you signed up for Cloud Native Aalborg
-  - Lets be sure you know where you get a coffe and a chat about Cloud Native and Kubernetes
-  - Experiment with it yourself on your laptop ifo Kubernetes (there are a number of distributions and also some for you laptop)
-    - [Kubernetes](./simple-kubernetes)
-    - [ingress](./simple-kubernetes-with-ingress)
-    - [observability](./observability)
-    - [kubedoom](./kubedoom)
-  
 ## Prerequisites
 These are the things that you would have to install on your machine to run the examples.
 
@@ -138,9 +129,39 @@ brew install helm
 choco install kubernetes-helm
 ```
 
+In the same way insstall `docker` and `git`if you do not have these installed already
+
 Alternate [Installing Helm](https://helm.sh/docs/intro/install/)
 
 
+You can check that you have the tools available running.
+
+```console
+$ docker version
+$ git version
+$ kind version
+$ helm version
+$ kind version
+```
+
+This should inform you about the `docker` and `kind` versions, furthermore you may check if any clusters are already running.
+
+Make sure you have started the installed `docker desktop`.
+
+## Please remember the purpose of the workshop
+Please remember this is created for you to learn basic suff about kubernetes and to have an environment set up on you local workstation or laptop.
+When you work through the workshops, by all means copy and paste commands, to avoid being stuck in misspelled commands. 
+Please do reflect over each thing you do and try to deduct, what you did and and what was the result. 
+
+- Lets start with what you can do in this room today
+  - Lets get you signed up for Cloud Native Aalborg
+  - Lets be sure you know where you get a coffe and a chat about Cloud Native and Kubernetes
+  - Experiment with it yourself on your laptop ifo Kubernetes (there are a number of distributions and also some for you laptop)
+    - [kubernetes](./simple-kubernetes) - start with this one
+    - [ingress](./simple-kubernetes-with-ingress) - then go on to this one
+    - [observability](./observability)
+    - [kubedoom](./kubedoom)
+  
 ## If you are using windows on your laptop
 There are some few thing that may work in a different way under windows.
 
@@ -150,7 +171,6 @@ You may want to copy the lines from the shell scripts under each folder instead 
 when creating and deleting local clusters.
 
 The gatering of metrics in the observability workshop may not work for you, as grafana does not pick up the metrics.
-
 
 ## If you experience an older kind kubernetes version
 You can add to the config yaml file, under nodes:

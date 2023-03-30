@@ -95,14 +95,17 @@ $ curl localhost/hello-baz/hostname
 ```
 
 which takes you through the `hello-ingress` ingress through the `hello-baz-service` service to the `hello-baz-app` pods. The
-`hello-baz-app` deployment contains 4 replicas. Try calling the application several times using:
+`hello-baz-app` deployment contains 4 replicas. Try calling the hello-baz application several times using:
 
 ```console
 $ curl localhost/hello-baz/hostname
 ```
 
 and see that it returns different names, which informs you that traffic is sent to different pods, i.e., the loadbalancing
-in the `baz` service balances across the pods.
+in the `baz` service balances across the pods. 
+
+This means you now have an application deployed across "nodes" and you receive traffic from "outside" the cluster and that traffic is balancede across "nodes" into one of the instances of the application.
+You can see that by examininig the names of the pods responding and knowing how these are distributed across "nodes" in the cluster:
 
 ```console
 $ kubectl get pods -o wide

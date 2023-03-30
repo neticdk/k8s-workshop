@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-kind delete cluster --name observability
+kind delete cluster --name observability-helm

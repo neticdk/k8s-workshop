@@ -13,7 +13,7 @@ _Note_ this example requires the installation of the Helm package manager for Ku
 Create cluster (`create_cluster.sh`):
 
 ```console
-$ kind create cluster --name observability --config=kind-config.yaml
+$ kind create cluster --name observability-helm --config=kind-config.yaml
 ```
 
 Install the monitoring stack (`install.sh`):
@@ -36,6 +36,11 @@ $ kubectl port-forward svc/oaas-observability-grafana 3000:80
 ```
 
 Go to http://localhost:3000 login is `admin` and password is `workshop`.
+
+
+## What did we learn
+
+
 
 ## Clean up
 ```console

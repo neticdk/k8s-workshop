@@ -14,15 +14,6 @@ The main [README.md](../README.md) outlines the prerequisites to the examples. W
 in this example, because it is easy to use to construct a Kubernetes cluster on your local machine and very easy to
 tear down as well.
 
-You can check that you have the tools available running.
-
-```console
-$ docker version
-$ kind version
-```
-
-This should inform you about the `docker` and `kind` versions, furthermore you may check if any clusters are already running.
-
 ```console
 $ kind get clusters
 ```
@@ -48,7 +39,7 @@ We check that the application was created:
 $ kubectl get deployments
 ```
 
-The deployment is actually controlling container which exists inside a pod  
+The deployment is actually controlling a container which exists inside a pod  
 
 ```console
 $ kubectl get pods
@@ -112,16 +103,27 @@ Lets try to make a connection directly to the service:
 $ kubectl port-forward service/hello-app 30070:8080 
 ```
 
-Find a browser and go to http://localhost:30070 And see the current time as the answer
+Find a browser and go to http://localhost:30070 and see the current time as the answer
 
 If you have curl installed, you can achieve the same using:
 ```console
 $ curl http://localhost:30070
 ```
 
+What you see is the current time, along the lines of:
+```console
+NOW: <YYYY-mm-DD> <HH:mm:ss> etc.
+````
+
+e.g.
+
+```console
+NOW:2023-02-27 09:53:52.645929376 +0000 UTC m=+111.601296052
+```
+
 ## What did we do
 
-We used the command line to deploy an application and exposed that.
+We used the command line to deploy an application and exposed that to a local port 30070.
 There was a lot done behind the scenes we did not look into, e.g., the deployment was done
 into a particular "space" inside the cluster which is named `default`.
 
@@ -369,7 +371,10 @@ There are plenty of commands that you can use for all sorts of things, please co
 ## What have we learned
 
 You have seen how you can create, change and control objects in a kubernetes cluster using the command line and arguments
-from the command line. We will now do the same in a declarative way, where the biggest difference is that you have you
+from the command line. You can now deploy a containerised application into a kubernetes cluster, which creates a replicaset and executes a pod having a container inside. 
+You can expose that application using a service and do a portforward in order to call the application. You have learned that a default namespace is used if nothing else is specified.
+
+We will now do the same in a declarative way, where the biggest difference is that you have you
 configurations declared in files and kubectl is in this workshop used to push this information to the cluster.
 
 
@@ -887,6 +892,10 @@ command line to tell the cluster about the things it need to work with. This app
 GitOps, where all the good things from git can be brought into play such as full audit a merge and tag based approach to configuration
 and control over your clusters.
 
+You can now deploy a containerised application into a kubernetes cluster iun a declarative way. The deployment creates a replicaset and executes a pod having a container inside. 
+You can expose that application using a service and do a portforward in order to call the application. You have learned that a default namespace is used if nothing else is specified.
+You can see that quite a lot of information is added to you declarative specifications from the cluster. You have seen that changes in the declarations are resulting in state change in the cluster, once that is applied.
+
 # Lets zoom out for a bit
 
 Kubernetes consist of a number of building blocks, they are depicted in the sketch below from kubernetes.io
@@ -907,7 +916,7 @@ NAME                 STATUS   ROLES           AGE   VERSION
 kind-control-plane   Ready    control-plane   94m   v1.25.3
 ```
 
-if you look for the docekre container constituting the node:
+if you look for the docker container constituting the node:
 
 ```console
 $ docker ps
