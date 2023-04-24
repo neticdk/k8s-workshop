@@ -1,6 +1,6 @@
 # Workshop with Kubernetes
 Welcome to this workshop. 
-The workshop is associated with a [slide deck](https://drive.google.com/file/d/1dz5dmj3jmMOqTUJ-MAsgf9RhDEWzyCmi/view?usp=share_link).
+The workshop is associated with a [slide deck](https://drive.google.com/file/d/1w76DgKCXDoJdcWEi1BVDIyMzPxA-j32k/view?usp=sharing).
 Material used in the workshop is based on different examples from github, articles and kubernetes.io
 
 ## Agenda
@@ -57,6 +57,9 @@ Material used in the workshop is based on different examples from github, articl
 ## Prerequisites
 These are the things that you would have to install on your machine to run the examples.
 
+### Install a local package manager
+Dependent on which operating system you use, the easiest way to install the workshop tooling is by using the package manager which is most suitable to your operating system, on windows that would typically be `choco`, on MacOs `brew` and on linux it could be `snap`, however it is up to you what you prefer. If you happen to have some of the tools installed already, you may want to write `upgrade` instead of ìnstall`in the commands below.
+
 ### Docker Desktop
 As we will be working with a local Kubernetes installation based on Docker a Docker Desktop
 distribution needs to be installed.
@@ -66,6 +69,9 @@ See [Install Docker Engine](https://docs.docker.com/engine/install/).
 ### Kubernetes CLI
 The `kubectl` cli allows access to interact with the Kubernetes cluster. This can be installed
 from package managers.
+
+### Conventions
+The `$`at the start of the command line is only there to illustrate that this is a command line command, the command you write is the not including the `$`. If you see commands like cat, they will only work on Mac, Linux, and in the windows linux subsystem, if you are on native windows you can try `type`, if you see curl
 
 **brew**
 
@@ -90,13 +96,13 @@ installed using most package managers.
 **brew**
 
 ```
-brew install kind
+$ brew install kind
 ```
 
 **choco**
 
 ```
-choco install kind
+$ choco install kind
 ```
 
 **Other**
@@ -111,13 +117,13 @@ providing a layer on top of the standard `kubectl` cli.
 **brew**
 
 ```
-brew install k9s
+$ brew install k9s
 ```
 
 **choco**
 
 ```
-choco install k9s
+$ choco install k9s
 ```
 
 ### Helm
@@ -127,16 +133,16 @@ A few of the examples require the [Helm](https://helm.sh/) tool to install packa
 **brew**
 
 ```
-brew install helm
+$ brew install helm
 ```
 
 **choco**
 
 ```
-choco install kubernetes-helm
+$ choco install kubernetes-helm
 ```
 
-In the same way install `docker` and `git`if you do not have these installed already
+In the same way install `curl`, `docker` and `git`if you do not have these installed already
 
 Alternate [Installing Helm](https://helm.sh/docs/intro/install/)
 
@@ -149,6 +155,7 @@ $ git version
 $ kind version
 $ helm version
 $ k9s version
+$ curl version
 ```
 
 This should inform you about the `docker` and `kind` versions, furthermore you may check if any clusters are already running.
@@ -161,8 +168,8 @@ When you work through the workshops, by all means copy and paste commands, to av
 Please do reflect over each thing you do and try to deduct, what you did and and what was the result. 
 
 - Lets start with what you can do in this room today
-  - Lets get you signed up for Cloud Native Aalborg
-  - Lets be sure you know where you get a coffe and a chat about Cloud Native and Kubernetes
+  - Lets get you signed up for Cloud Native Aalborg (https://community.cncf.io/aalborg/ and `join`)
+  - Lets make sure you know where you get a coffe and a chat about Cloud Native and Kubernetes
   - Experiment with it yourself on your laptop ifo Kubernetes (there are a number of distributions and also some for you laptop)
     - [kubernetes](./simple-kubernetes) - start with this one
     - [ingress](./simple-kubernetes-with-ingress) - then go on to this one
