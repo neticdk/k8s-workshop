@@ -148,7 +148,7 @@ $ docker version
 $ git version
 $ kind version
 $ helm version
-$ kind version
+$ k9s version
 ```
 
 This should inform you about the `docker` and `kind` versions, furthermore you may check if any clusters are already running.
