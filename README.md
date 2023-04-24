@@ -136,7 +136,7 @@ brew install helm
 choco install kubernetes-helm
 ```
 
-In the same way insstall `docker` and `git`if you do not have these installed already
+In the same way install `docker` and `git`if you do not have these installed already
 
 Alternate [Installing Helm](https://helm.sh/docs/intro/install/)
 
