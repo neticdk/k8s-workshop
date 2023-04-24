@@ -79,6 +79,8 @@ $ brew install kubernetes-cli
 $ choco install kubernetes-cli
 ```
 
+For other ways of installing `kubectl` in Windows see [Install and Set Up kubectl on Windows](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/)
+
 ### Kubernetes in Docker (kind)
 
 We will be running a local Kubernetes cluster based on the Kubernetes distribution called
@@ -96,6 +98,11 @@ brew install kind
 ```
 choco install kind
 ```
+
+**Other**
+
+For other install options see [Quick Start](https://kind.sigs.k8s.io/docs/user/quick-start/)
+
 ### k9s
 
 Oprinally the [k9s](https://k9scli.io/) utility can help browsing and managing the Kubernetes cluster
