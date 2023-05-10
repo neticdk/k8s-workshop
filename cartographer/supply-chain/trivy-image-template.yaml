@@ -1,0 +1,49 @@
+---
+apiVersion: carto.run/v1alpha1
+kind: ClusterRunTemplate
+metadata:
+  name: trivy-build-pipeline
+spec:
+  outputs:
+    imageRef: status.pipelineResults[0].value
+  template:
+    apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: $(runnable.metadata.name)$-
+    spec:
+      params: $(runnable.spec.inputs.params)$
+      pipelineRef:
+        name: trivy-pipeline
+      podTemplate:
+        securityContext:
+          fsGroup: 3000
+      workspaces:
+        - name: pipeline-ws
+          emptyDir: {}
+---
+apiVersion: carto.run/v1alpha1
+kind: ClusterImageTemplate
+metadata:
+  name: trivy-image-scanning
+  namespace: cartographer-build
+spec:
+  params:
+    - name: image_ref
+      default: no-default-ref
+
+  imagePath: .status.outputs.imageRef
+  ytt: |
+    #@ load("@ytt:data", "data")
+    apiVersion: carto.run/v1alpha1
+    kind: Runnable
+    metadata:
+      name: #@ data.values.workload.metadata.name + "-trivy-scanning"
+    spec:
+      inputs:
+        params:
+        - name: image-reference
+          value: #@ data.values.image
+      runTemplateRef:
+        name: trivy-build-pipeline
+      serviceAccountName: #@ data.values.workload.spec.serviceAccountName

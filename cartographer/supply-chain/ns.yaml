@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cartographer-build
+  labels:
+    name: cartographer-build
+    netic.dk/monitoring: "true"

@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: kaniko-pipeline
+  namespace: cartographer-build
+spec:
+  description: |
+    This pipeline fetches artifact, builds container image with Kaniko and
+    pushes it to a registry.
+  params:
+    - name: artifact-url
+      type: string
+    - name: image-reference
+      type: string
+  workspaces:
+    - name: source-ws
+    - name: docker-credentials
+      #optional: true
+  tasks:
+    - name: fetch-source
+      taskRef:
+        name: fetch-source
+      params:
+        - name: artifact-url
+          value: $(params.artifact-url)
+      workspaces:
+        - name: output
+          workspace: source-ws
+    - name: build-push
+      runAfter: ["fetch-source"]
+      taskRef:
+        name: kaniko
+      workspaces:
+        - name: source
+          workspace: source-ws
+        - name: dockerconfig
+          workspace: docker-credentials
+      params:
+        - name: IMAGE
+          value: $(params.image-reference)

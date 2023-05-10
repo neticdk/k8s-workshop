@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: trivy-pipeline
+  namespace: cartographer-build
+spec:
+  description: |
+    This pipeline runs Trivy scanning on the given image reference.
+  params:
+    - name: image-reference
+      type: string
+  workspaces:
+    - name: pipeline-ws
+  results:
+    - name: image-ref
+      value: $(tasks.image-ref-export.results.image-ref)
+  tasks:
+    - name: trivy-scanner
+      taskRef:
+        name: trivy-scanner
+      workspaces:
+        - name: manifest-dir
+          workspace: pipeline-ws
+      params:
+        - name: ARGS
+          value: ["image", "--exit-code", "1", "--severity", "CRITICAL"]
+        - name: IMAGE_PATH
+          value: $(params.image-reference)
+    - name: image-ref-export
+      runAfter:
+        - trivy-scanner
+      params:
+        - name: image-ref
+          value: $(params.image-reference)
+      taskSpec:
+        params:
+          - name: image-ref
+        results:
+          - name: image-ref
+            description: The Image Ref to be used by TAP for future supply chain steps
+        steps:
+          - image: ubuntu
+            script: |
+              echo $(params.image-ref) | tr -d '\n' | tee $(results.image-ref.path)

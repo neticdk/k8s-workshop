@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: fetch-source
+  namespace: cartographer-build
+spec:
+  description: >-
+    Fetches source tar.gz from the given URL and unpacks it
+  params:
+    - name: artifact-url
+      description: URL pointing to tar gz file to be downloaded and unpacked.
+      type: string
+  workspaces:
+    - name: output
+      description: The artifact will be unpacked onto the volume backing this Workspace.
+  results: []
+  steps:
+    - name: fetch-source
+      image: curlimages/curl:7.86.0
+      script: |
+        #!/usr/bin/env sh
+        cd $(workspaces.output.path)
+        curl -SL $(params.artifact-url) | tar xvzf -

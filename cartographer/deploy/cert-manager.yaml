@@ -1,0 +1,164 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: netic-security-system
+  labels:
+    name: netic-security-system
+    netic.dk/monitoring: "true"
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cert-manager-controller
+  namespace: netic-security-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/component: controller
+  policyTypes:
+    - Egress
+    - Ingress
+  ingress:
+    - ports:
+        - port: 9402
+          protocol: TCP
+  egress:
+    - ports: # DNS and API server
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+        - port: 443
+          protocol: TCP
+        - port: 80
+          protocol: TCP
+        - port: 6443
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cert-manager-cainjector
+  namespace: netic-security-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: cainjector
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/component: cainjector
+  policyTypes:
+    - Egress
+    - Ingress
+  ingress: []
+  egress:
+    - ports: # DNS and API server
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+        - port: 443
+          protocol: TCP
+        - port: 6443
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cert-manager-webhook
+  namespace: netic-security-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: webhook
+      app.kubernetes.io/instance: cert-manager
+      app.kubernetes.io/component: webhook
+  policyTypes:
+    - Egress
+    - Ingress
+  ingress:
+    - ports:
+        - port: https
+          protocol: TCP
+  egress:
+    - ports: # DNS and API server
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+        - port: 443
+          protocol: TCP
+        - port: 6443
+          protocol: TCP
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: jetstack
+  namespace: netic-security-system
+spec:
+  url: https://charts.jetstack.io
+  interval: 10m
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: netic-security-system
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: cert-manager
+      version: "v1.11.0"
+      sourceRef:
+        kind: HelmRepository
+        name: jetstack
+        namespace: netic-security-system
+      interval: 5m
+  releaseName: cert-manager
+  values:
+    global:
+      podSecurityPolicy:
+        enabled: false
+    image:
+      repository: quay.io/jetstack/cert-manager-controller
+      pullPolicy: Always
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+    webhook:
+      image:
+        repository: quay.io/jetstack/cert-manager-webhook
+        pullPolicy: Always
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+        runAsNonRoot: true
+    cainjector:
+      image:
+        repository: quay.io/jetstack/cert-manager-cainjector
+        pullPolicy: Always
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+        runAsNonRoot: true
+    startupapicheck:
+      image:
+        repository: quay.io/jetstack/cert-manager-ctl
+        pullPolicy: Always
+    installCRDs: true
+    extraArgs:
+      - "--dns01-recursive-nameservers-only"

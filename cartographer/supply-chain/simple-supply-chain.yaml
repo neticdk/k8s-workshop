@@ -1,0 +1,25 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterSupplyChain
+metadata:
+  name: supply-chain
+  namespace: cartographer-build
+spec:
+  selector:
+    netic.dk/workload-type: simple-image
+
+  resources:
+    - name: source-provider
+      templateRef:
+        kind: ClusterSourceTemplate
+        name: source
+
+    - name: image-builder
+      templateRef:
+        kind: ClusterImageTemplate
+        name: kaniko-image
+      params:
+        - name: image_prefix
+          value: registry.registry.svc.cluster.local:5000/build/
+      sources:
+        - resource: source-provider
+          name: source

@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: export-image-ref
+  namespace: cartographer-build
+spec:
+  params:
+  - name: image-url
+    type: string
+  - name: image-digest
+    type: string
+  results:
+    - name: image-ref
+      description: The Image Ref to be used by TAP for future supply chain steps
+  steps:
+  - image: ubuntu
+    command:
+    - bash
+    - -cxe
+    - |-
+      set -o pipefail
+      echo $(params.image-url)@$(params.image-digest) | tr -d '\n' | tee $(results.image-ref.path)
+    name: extract-source
+    resources: {}
