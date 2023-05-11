@@ -82,6 +82,12 @@ Current context is normally in this workshop `kind-kind`.
 $ kubectl config view | grep kind-kind
 ```
 
+If you happen to work on windows and did not install grep, you may use:
+
+```console
+$ kubectl config view | Findstr kind-kind
+```
+
 ## Expose the Application
 
 An application which can not be used is not much fun is it?
