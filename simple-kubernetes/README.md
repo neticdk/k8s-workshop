@@ -227,13 +227,13 @@ You can see a hello-app : pod, replicaset, deployment, service
 For the sake of completeness we can take a look at the other objects we have worked with sofar:
 
 ```console
-$ kubectl get deployments hello-app  -o yaml
+$ kubectl get deployments hello-app -o yaml
 ```
 
 Or address the type and object in one single attribute:
 
 ```console
-$ kubectl get deployment.apps/hello-app  -o yaml
+$ kubectl get deployment.apps/hello-app -o yaml
 ```
 Tak a look at the YAML and see the replicas number equals 1, that it has metadata labels and that you can see the image from the initial deployment under spec image.
 
@@ -260,7 +260,7 @@ $ kubectl get pod/hello-app-xx...xdbbc-yynl -o yaml
 Or in a single command like this:
 
 ```console
-$ kubectl get pods $(kubectl get pods -template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}') -o yaml
+$ kubectl get pods $(kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}') -o yaml
 ```
 
 
