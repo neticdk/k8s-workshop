@@ -71,7 +71,12 @@ The `kubectl` cli allows access to interact with the Kubernetes cluster. This ca
 from package managers.
 
 ### Conventions
-The `$`at the start of the command line is only there to illustrate that this is a command line command, the command you write is the not including the `$`. If you see commands like cat, they will only work on Mac, Linux, and in the windows linux subsystem, if you are on native windows you can try `type`, if you see curl
+Commands are presented with code blocks, shown like so:
+```
+echo "hello world"
+```
+
+If you see commands like cat, they will only work on Mac, Linux, and in the windows linux subsystem, if you are on native windows you can try `type`, if you see curl
 
 **brew**
 
