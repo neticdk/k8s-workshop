@@ -76,13 +76,13 @@ The `$`at the start of the command line is only there to illustrate that this is
 **brew**
 
 ```console
-$ brew install kubernetes-cli
+brew install kubernetes-cli
 ```
 
 **choco**
 
 ```console
-$ choco install kubernetes-cli
+choco install kubernetes-cli
 ```
 
 For other ways of installing `kubectl` in Windows see [Install and Set Up kubectl on Windows](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/)
@@ -96,13 +96,13 @@ installed using most package managers.
 **brew**
 
 ```
-$ brew install kind
+brew install kind
 ```
 
 **choco**
 
 ```
-$ choco install kind
+choco install kind
 ```
 
 **Other**
@@ -117,13 +117,13 @@ providing a layer on top of the standard `kubectl` cli.
 **brew**
 
 ```
-$ brew install k9s
+brew install k9s
 ```
 
 **choco**
 
 ```
-$ choco install k9s
+choco install k9s
 ```
 
 ### Helm
@@ -133,13 +133,13 @@ A few of the examples require the [Helm](https://helm.sh/) tool to install packa
 **brew**
 
 ```
-$ brew install helm
+brew install helm
 ```
 
 **choco**
 
 ```
-$ choco install kubernetes-helm
+choco install kubernetes-helm
 ```
 
 In the same way install `curl`, `docker` and `git`if you do not have these installed already
@@ -150,12 +150,12 @@ Alternate [Installing Helm](https://helm.sh/docs/intro/install/)
 You can check that you have the tools available running.
 
 ```console
-$ docker version
-$ git version
-$ kind version
-$ helm version
-$ k9s version
-$ curl version
+docker version
+git version
+kind version
+helm version
+k9s version
+curl version
 ```
 
 This should inform you about the `docker` and `kind` versions, furthermore you may check if any clusters are already running.
