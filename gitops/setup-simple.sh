@@ -30,7 +30,6 @@ popd
 
 # Bootstrap flux
 if kubectl get -n flux-system deployments 2>&1 | grep -q "No resources found"; then
-    echo Bootstrap flux
     kubectl create secret generic sync-key-secret --from-file=ssh-privatekey=$path/hack/git-server/keys/sync-key --from-file=ssh-publickey=$path/hack/git-server/keys/sync-key.pub
     kubectl apply -f $path/flux-bootstrap-job.yaml
     kubectl wait --for=condition=complete job/flux-bootstrap --timeout=120s
