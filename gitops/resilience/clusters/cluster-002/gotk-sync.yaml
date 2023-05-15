@@ -6,12 +6,12 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 30s
+  interval: 1m0s
   ref:
     branch: main
   secretRef:
     name: flux-system
-  url: ssh://git@host.docker.internal:2222/git-server/repos/multicluster.git
+  url: ssh://git@host.docker.internal:2222/git-server/repos/clusters.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -20,7 +20,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./clusters/cluster-001
+  path: ./cluster-002
   prune: true
   sourceRef:
     kind: GitRepository
