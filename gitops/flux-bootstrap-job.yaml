@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: flux-bootstrap
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: flux-bootstrap
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: flux-bootstrap
+  namespace: default
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flux-bootstrap
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: bootstrap
+        args:
+        - bootstrap
+        - git
+        - --url=ssh://git@host.docker.internal:2222/git-server/repos/simple.git
+        - --private-key-file=/git-server/keys/ssh-privatekey
+        - --path=.
+        - --silent
+        image: ghcr.io/fluxcd/flux-cli:v2.0.0-rc.2
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: sync-key-secret
+          readOnly: true
+          mountPath: "/git-server/keys"
+      serviceAccountName: flux-bootstrap
+      volumes:
+      - name: sync-key-secret
+        secret:
+          secretName: sync-key-secret

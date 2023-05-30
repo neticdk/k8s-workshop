@@ -21,7 +21,7 @@ Material used in the workshop is based on different examples from github, articl
      - and more
 
 - Introduction to me/us
-  - `whoami` (who are we) and `which` (what are we doing and why)
+  - `whoami` (who is talking) and `which` (what are we doing and why)
 
 - We see Cloud Native as the biggest unifier and abstraction seen so far
   - A little more info about what Cloud native is and is not
@@ -36,7 +36,10 @@ Material used in the workshop is based on different examples from github, articl
      - private cloud and 
      - public cloud(s)
 
-- Why do you want to work with Cloud Native
+    Covering every programming language using containerisation.
+
+
+- Why do you want to work with Cloud Native?
 
   First and foremost: You will be working with Cloud Native.
 
@@ -48,8 +51,8 @@ Material used in the workshop is based on different examples from github, articl
   - electronics engineeer
   There will be Cloud Native Technology in code close to you.
 
-- Where can you learn more about Cloud Native
-  - Aalborg Cloud Native Meetup Community (part of CNCF and next meeting 28th of March 2023)
+- Where can you learn more about Cloud Native?
+  - Aalborg Cloud Native Meetup Community (part of CNCF and next meeting after summer 2023)
   - Experiment with it yourself on your laptop
   - Work someplace where they work with Kubernetes and other Cloud Native technologies are used for real (and secure) applications
   - Come join us, join us on our mission to make Kubernetes and Cloud Native available in a secure and easy manner for real applications
@@ -146,8 +149,13 @@ In the same way install `curl`, `docker` and `git`if you do not have these insta
 
 Alternate [Installing Helm](https://helm.sh/docs/intro/install/)
 
+### Checking your install
 
-You can check that you have the tools available running.
+You can check that you have the tools available running. 
+You need to be administrator of your machine, and please check the session about Windows if you are using a Windows machine.
+And please observe if you are using a corporate controlled machine, that may include blocking software. 
+Which may make it difficult to get a successful check.
+
 
 ```console
 $ docker version
@@ -167,6 +175,7 @@ Please remember this is created for you to learn basic suff about kubernetes and
 When you work through the workshops, by all means copy and paste commands, to avoid being stuck in misspelled commands. 
 Please do reflect over each thing you do and try to deduct, what you did and and what was the result. 
 
+## Excercises
 - Lets start with what you can do in this room today
   - Lets get you signed up for Cloud Native Aalborg (https://community.cncf.io/aalborg/ and `join`)
   - Lets make sure you know where you get a coffe and a chat about Cloud Native and Kubernetes
@@ -176,7 +185,7 @@ Please do reflect over each thing you do and try to deduct, what you did and and
     - [observability](./observability)
     - [kubedoom](./kubedoom)
   
-## If you are using windows on your laptop
+## If you are using Windows on your laptop
 There are some few thing that may work in a different way under windows.
 
 You may want to copy the lines from the shell scripts under each folder instead using the scripts:

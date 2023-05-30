@@ -82,6 +82,12 @@ Current context is normally in this workshop `kind-kind`.
 $ kubectl config view | grep kind-kind
 ```
 
+If you happen to work on windows and did not install grep, you may use:
+
+```console
+$ kubectl config view | Findstr kind-kind
+```
+
 ## Expose the Application
 
 An application which can not be used is not much fun is it?
@@ -928,7 +934,7 @@ CONTAINER ID   IMAGE                    COMMAND                  CREATED       S
 c90908d64ac9   kindest/node:v1.25.3     "/usr/local/bin/entr…"   2 hours ago   Up 2 hours   127.0.0.1:49189->6443/tcp   kind-control-plane
 ```
 
-Normally you would have a multinode kubernetes clusters running, and typically in a pblic cloud that would be 3 control-plane nodes and 3,6 or 9 workernodes.
+Normally you would have a multinode kubernetes clusters running, and typically in a public cloud that would be 3 control-plane nodes and 3,6 or 9 workernodes.
 
 If you go into the `multi-node-cluster` folder, you can do something very similar on your local maschine:
 
