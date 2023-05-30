@@ -1,0 +1,1 @@
+FROM nginxinc/nginx-unprivileged

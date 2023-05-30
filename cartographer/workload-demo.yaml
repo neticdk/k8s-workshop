@@ -1,0 +1,15 @@
+---
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: cartographer-demo
+  namespace: cartographer-build
+  labels:
+    netic.dk/workload-type: simple-image
+spec:
+  serviceAccountName: build
+  source:
+    git:
+      url: ssh://git@host.docker.internal:2222/git-server/repos/cartographer-demo.git
+      ref:
+        branch: main

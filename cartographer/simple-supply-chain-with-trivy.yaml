@@ -1,0 +1,33 @@
+apiVersion: carto.run/v1alpha1
+kind: ClusterSupplyChain
+metadata:
+  name: supply-chain
+  namespace: cartographer-build
+spec:
+  selector:
+    netic.dk/workload-type: simple-image
+
+  resources:
+  - name: source-provider
+    templateRef:
+      kind: ClusterSourceTemplate
+      name: source
+
+  - name: image-builder
+    templateRef:
+      kind: ClusterImageTemplate
+      name: kaniko-image
+    params:
+    - name: image_prefix
+      value: registry.netic.dk/netic-oaas/
+    sources:
+    - resource: source-provider
+      name: source
+
+  - name: trivy-scanner
+    templateRef:
+      kind: ClusterImageTemplate
+      name: trivy-image-scanning
+    images:
+    - resource: image-builder
+      name: image

@@ -29,17 +29,17 @@ spec:
                   storage: 1Gi
         - name: docker-credentials
           emptyDir: {}
-        - name: git-credentials
-          emptyDir: {}
+        # - name: git-credentials
+        #   emptyDir: {}
         # - name: docker-credentials
         #   secret:
         #     secretName: registry-credentials
         #     items:
         #       - key: .dockerconfigjson
         #         path: config.json
-        # - name: git-credentials
-        #   secret:
-        #     secretName: git-auth
+        - name: git-credentials
+          secret:
+            secretName: git-clone-auth
 ---
 apiVersion: carto.run/v1alpha1
 kind: ClusterImageTemplate

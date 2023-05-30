@@ -27,8 +27,8 @@ spec:
       workspaces:
       - name: output
         workspace: source-ws
-      # - name: basic-auth
-      #   workspace: git-credentials
+      - name: ssh-directory
+        workspace: git-credentials
       params:
       - name: url
         value: $(params.repo-url)
