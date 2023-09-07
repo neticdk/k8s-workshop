@@ -4,7 +4,7 @@ To gain insights into the health of workloads in Kubernetes it is normal to inst
 tooling. Most observability stacks on Kubernetes is based on the work of
 [Prometheus Monotoring Mixin for Kubernetes](https://github.com/kubernetes-monitoring/kubernetes-mixin).
 
-Netic provides an open source distribution based on the standard Kubernetes Monitoring Mixin names [oaas-observability](https://github.com/neticdk/k8s-oaas-observability).
+Netic provides an open source distribution based on the standard Kubernetes Monitoring Mixin named [oaas-observability](https://github.com/neticdk/k8s-oaas-observability).
 
 _Note_ this example requires the installation of the Helm package manager for Kubernetes.
 
@@ -26,6 +26,9 @@ $ helm upgrade -i oaas-observability netic-oaas/oaas-observability \
   --set grafana.adminPassword=workshop
 ```
 
+If you see a warning concerning an annotation, that is ok.
+
+
 ## Access to Dashboards
 
 It is not possible to access dashboards showing the data from the cluster through Grafana by
@@ -39,7 +42,7 @@ Go to http://localhost:3000 login is `admin` and password is `workshop`.
 
 
 ## What did we learn
-
+We probably learned that using helm can be an easy way to deploy a bunch of stuff into a cluster.
 
 
 ## Clean up
