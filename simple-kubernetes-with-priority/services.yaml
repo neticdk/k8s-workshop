@@ -1,0 +1,77 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello-foo-service
+spec:
+  selector:
+    app.kubernetes.io/name: hello-foo
+    app.kubernetes.io/instance: hello-foo
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello-foo-pdb-service
+spec:
+  selector:
+    app.kubernetes.io/name: hello-foo-pdb
+    app.kubernetes.io/instance: hello-foo-pdb
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello-bar-service
+spec:
+  selector:
+    app.kubernetes.io/name: hello-bar
+    app.kubernetes.io/instance: hello-bar
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello-bar-pdb-service
+spec:
+  selector:
+    app.kubernetes.io/name: hello-bar-pdb
+    app.kubernetes.io/instance: hello-bar-pdb
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello-baz-service
+spec:
+  selector:
+    app.kubernetes.io/name: hello-baz
+    app.kubernetes.io/instance: hello-baz
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello-foobar-service
+spec:
+  selector:
+    app.kubernetes.io/name: hello-foobar
+    app.kubernetes.io/instance: hello-foobar
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

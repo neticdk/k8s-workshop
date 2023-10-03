@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: hello-bar-pdb
+    app.kubernetes.io/instance: hello-bar-pdb
+  name: hello-bar-pdb-app
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-bar-pdb
+      app.kubernetes.io/instance: hello-bar-pdb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-bar-pdb
+        app.kubernetes.io/instance: hello-bar-pdb
+    spec:
+      priorityClassName: medium-priority
+      containers:
+        - command:
+            - /agnhost
+            - netexec
+            - --http-port=8080
+          image: registry.k8s.io/e2e-test-images/agnhost:2.39
+          name: hello-bar-pdb-app
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources: 
+            limits: 
+              cpu: 125m
+              memory: 25Mi
+            requests: 
+              cpu: 125m
+              memory: 25Mi
+              
