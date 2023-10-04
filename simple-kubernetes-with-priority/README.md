@@ -707,6 +707,166 @@ hello-foobar-app    22/80   80           22          105m
 
 Now we see that the capasity of the cluster is balancing  back towards a more balanced setup.
 
+By the way would it be interesting to know how the prioritisation looks at the control group level?
+lets us look at the running pods
+
+```console
+$ kubectl get pods
+```
+
+```console
+$ kubectl get pods hello-foo-pdb-app-7bbcb979bb-4b4jq -o yaml | grep cpu
+        cpu: 90m   
+        cpu: 80m
+```
+or:
+
+```console
+$ kubectl get pods hello-foo-pdb-app-7bbcb979bb-4b4jq -o json | jq '.spec.containers | .[].resources'
+```
+```json
+{
+  "limits": {
+    "cpu": "90m",
+    "memory": "25Mi"
+  },
+  "requests": {
+    "cpu": "80m",
+    "memory": "25Mi"
+  }
+}
+```
+Which means that it requests 80 milli core cpu and has a limit of 90 milli core, lets see how that is reflected in the control groups information and thus seen from the operating system under kubernetes:
+
+```console
+$ kubectl exec hello-foo-pdb-app-7bbcb979bb-4b4jq -c hello-foo-pdb-app -- cat /sys/fs/cgroup/cpu.max
+9000 100000
+```
+This means the os allows this container to use maximum 9000/100000 which equals 90 milli cores.
+
+What about the request then?
+```console
+$ kubectl exec hello-foo-pdb-app-7bbcb979bb-4b4jq -c hello-foo-pdb-app -- cat /sys/fs/cgroup/cpu.weight  
+4
+``````
+This pod container has a weight at the os level of 4, this should be seen together with the weight other pod containers would have.
+Lets see a couple of others:
+
+```console
+kubectl get pods hello-bar-pdb-app-5f9d4787f6-2n5vb -o json | jq '.spec.containers | .[].resources '
+```
+```json
+{
+  "limits": {
+    "cpu": "125m",
+    "memory": "25Mi"
+  },
+  "requests": {
+    "cpu": "125m",
+    "memory": "25Mi"
+  }
+}
+```
+
+```console
+$ kubectl exec hello-bar-pdb-app-5f9d4787f6-2n5vb -c hello-bar-pdb-app -- cat /sys/fs/cgroup/cpu.max
+12500 100000
+$ kubectl exec hello-bar-pdb-app-5f9d4787f6-2n5vb -c hello-bar-pdb-app -- cat /sys/fs/cgroup/cpu.weight  
+5
+```
+
+
+```console
+$ kubectl get pods hello-foobar-app-76fd9fc6cb-6w46d -o json | jq '.spec.containers | .[].resources'
+```
+```json
+{
+  "limits": {
+    "cpu": "505m",
+    "memory": "25Mi"
+  },
+  "requests": {
+    "cpu": "185m",
+    "memory": "25Mi"
+  }
+}
+```
+
+```console
+$ kubectl exec hello-foobar-app-76fd9fc6cb-6w46d -c hello-foobar-app -- cat /sys/fs/cgroup/cpu.max
+50500 100000
+$ kubectl exec hello-foobar-app-76fd9fc6cb-6w46d -c hello-foobar-app -- cat /sys/fs/cgroup/cpu.weight  
+8
+```
+So we see the weigth is proportional to the amount of cpu requested and the limit is set at the OS level.
+What if the limits are not set, how would that look?
+
+```console
+$ kubectl create -f ./deployment-high-prio-nolimit.yaml
+$ kubectl get pods hello-foo-app-nl-769d648d56-jnv9t -o json | jq '.spec.containers | .[].resources 
+```
+```json
+{
+  "limits": {
+    "memory": "25Mi"
+  },
+  "requests": {
+    "cpu": "2800m",
+    "memory": "25Mi"
+  }
+}
+```
+```console
+$ kubectl exec hello-foo-app-nl-769d648d56-jnv9t -c hello-foo-app-nl -- cat /sys/fs/cgroup/cpu.max 
+max 100000
+$ kubectl exec hello-foo-app-nl-769d648d56-jnv9t -c hello-foo-app-nl -- cat /sys/fs/cgroup/cpu.weight  
+110
+```
+
+The container is allowed to use `max` at the OS level and the weigth is higher than the rest as the request is higer than the rest.
+
+Lets go back to the prioritisation us3ed in connection with preempting pods, kubernetes states that it respects the `PodDisruptionBudgets` if possible
+Now lets try to make the experiment from before a little different where we create a point of equilibrium for priorited pods where all of them are met.
+Making sure there is room enough for kubernetes to favior the `PodDisruptionBudgets` of the same priority.
+
+```console
+$ kubectl scale --replicas=80 deployment/hello-foo-app 
+$ kubectl scale --replicas=105 deployment/hello-foo-pdb-app 
+$ kubectl scale --replicas=3 deployment/hello-bar-app
+$ kubectl scale --replicas=6 deployment/hello-bar-pdb-app
+$ kubectl scale --replicas=10 deployment/hello-baz-app 
+$ kubectl scale --replicas=10 deployment/hello-foobar-app
+```
+
+We see the equilibrium below, the medium and high priority workloads are balanced.
+
+```console
+$ kubectl get deployments                             
+NAME                READY     UP-TO-DATE   AVAILABLE   AGE
+hello-bar-app       3/3       3            3           25h
+hello-bar-pdb-app   6/6       6            6           25h
+hello-baz-app       0/10      10           0           25h
+hello-foo-app       70/80     80           70          25h
+hello-foo-pdb-app   105/105   105          105         25h
+hello-foobar-app    0/10      10           0           25h
+```
+
+From before we saw that the point where it had to decide between the workloads having a pdb and not it chose the scaledown of the pdb, however there are another option that may come into play at this stage. The size of the workload, the idea is thus to scale more drastically in order to let free size be a non-factor in the sceduling.
+
+```console
+$ kubectl scale --replicas=112 deployment/hello-foo-pdb-app
+$ kubectl get deployments           
+NAME                READY     UP-TO-DATE   AVAILABLE   AGE
+hello-bar-app       3/3       3            3           25h
+hello-bar-pdb-app   1/6       6            1           25h
+hello-baz-app       0/10      10           0           25h
+hello-foo-app       80/80     80           80          25h
+hello-foo-pdb-app   112/112   112          112         25h
+hello-foobar-app    0/10      10           0           25h
+```
+
+We see that kubernetes would have had the choice for selecting the one without a PodDisruptionBudget, however it does not.
+
 ## Install the services for the applications
 
 Take a look at the services, which are in front of the applications.
@@ -858,10 +1018,8 @@ metadata:
 
 And then try to deploy as you did above and see how kubernetes handles overcommit within each namespace in a deterministic way and using that together with priority classes that is giving you the opportunity to control your workload's behaviour relative to what is deployed into the same cluster.
 
-
-
 # Workshop Intentions
-The intentions of this workshop was to convey som initial knowledge on working with kubernetes in a very simple way, the aim being to leave you with a bit of knowledge that will hopefully ignite your interest in kubernetes, as it is possible to work with it on your local machine. Furthermore the aim of this excecise is to demonstrate to you that it is possible to run prioritsed workloads in kubernetes in a fairly simple way and that, if you choose you may used a deterministic scheduling option alobg with that.
+The intentions of this workshop was to convey som initial knowledge on working with kubernetes in a very simple way, the aim being to leave you with a bit of knowledge that will hopefully ignite your interest in kubernetes, as it is possible to work with it on your local machine. Furthermore the aim of this excecise is to demonstrate to you that it is possible to run prioritised workloads in kubernetes in a fairly simple way and that, if you choose you may used a deterministic scheduling option along with that. If you have workloads of the priority kubernetes makes a choice for what is preempted if necessary. You can see how the ressource definitons ripples down into the operating system and the runtime scheduling information used by the OS. 
 
 Please tell us your feedback for us to be able to make a better job the next time, so please:
 - what did you find hard in the workshop?
