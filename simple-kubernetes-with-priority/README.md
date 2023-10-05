@@ -694,6 +694,8 @@ $ kubectl scale --replicas=12 deployment/hello-foo-pdb-app
 $ kubectl scale --replicas=10 deployment/hello-foo-app
 $ kubectl scale --replicas=8 deployment/hello-bar-app
 $ kubectl scale --replicas=6 deployment/hello-bar-pdb-app
+$ kubectl scale --replicas=80 deployment/hello-baz-app
+$ kubectl scale --replicas=80 deployment/hello-foobar-app
 
 $ kubectl get deployments
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
@@ -866,6 +868,18 @@ hello-foobar-app    0/10      10           0           25h
 ```
 
 We see that kubernetes would have had the choice for selecting the one without a PodDisruptionBudget, however it does not.
+
+
+Rebalance the setup:
+
+```console
+$ kubectl scale --replicas=12 deployment/hello-foo-pdb-app
+$ kubectl scale --replicas=10 deployment/hello-foo-app
+$ kubectl scale --replicas=8 deployment/hello-bar-app
+$ kubectl scale --replicas=6 deployment/hello-bar-pdb-app
+$ kubectl scale --replicas=80 deployment/hello-baz-app
+$ kubectl scale --replicas=80 deployment/hello-foobar-app
+```
 
 ## Install the services for the applications
 
