@@ -18,7 +18,6 @@ spec:
         app.kubernetes.io/name: hello-foobar
         app.kubernetes.io/instance: hello-foobar
     spec:
-      priorityClassName: low-priority
       containers:
         - command:
             - /agnhost
