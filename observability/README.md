@@ -30,7 +30,7 @@ kubectl create -f setup
 Which installs a set of Custom Resource Defintitions or in short CRDs - if you want to see them, you can get the installed custom ressources by:
 ```console
 kubectl get customresourcedefinition.apiextensions.k8s.io
-kubenctl get customresourcedefinition.apiextensions.k8s.io/alertmanagers.monitoring.coreos.com -o yaml
+kubectl get customresourcedefinition.apiextensions.k8s.io/alertmanagers.monitoring.coreos.com -o yaml
 ````
 
 And you may describe one of the custom ressources by: 

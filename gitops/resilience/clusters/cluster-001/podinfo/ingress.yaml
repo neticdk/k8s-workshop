@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: podinfo
+spec:
+  rules:
+    - host: podinfo-127-0-0-1.nip.io
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: podinfo
+                port:
+                  name: http

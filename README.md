@@ -21,7 +21,7 @@ Material used in the workshop is based on different examples from github, articl
      - and more
 
 - Introduction to me/us
-  - `whoami` (who are we) and `which` (what are we doing and why)
+  - `whoami` (who is talking) and `which` (what are we doing and why)
 
 - We see Cloud Native as the biggest unifier and abstraction seen so far
   - A little more info about what Cloud native is and is not
@@ -36,7 +36,10 @@ Material used in the workshop is based on different examples from github, articl
      - private cloud and 
      - public cloud(s)
 
-- Why do you want to work with Cloud Native
+    Covering every programming language using containerisation.
+
+
+- Why do you want to work with Cloud Native?
 
   First and foremost: You will be working with Cloud Native.
 
@@ -48,9 +51,9 @@ Material used in the workshop is based on different examples from github, articl
   - electronics engineeer
   There will be Cloud Native Technology in code close to you.
 
-- Where can you learn more about Cloud Native
-  - Aalborg Cloud Native Meetup Community (part of CNCF and next meeting 28th of March 2023)
-  - Experiment with it yourself on your laptop
+- Where can you learn more about Cloud Native?
+  - Cloud Native Meetup Community (Copenhagen, Aarhus, Aalborg) and in other Scandivian Countries or anywhere in the [world](https://community.cncf.io/chapters/)
+  - Experiment with it yourself on your laptop using e.g. kind (Kubernetes in Docker)
   - Work someplace where they work with Kubernetes and other Cloud Native technologies are used for real (and secure) applications
   - Come join us, join us on our mission to make Kubernetes and Cloud Native available in a secure and easy manner for real applications
 
@@ -60,11 +63,64 @@ These are the things that you would have to install on your machine to run the e
 ### Install a local package manager
 Dependent on which operating system you use, the easiest way to install the workshop tooling is by using the package manager which is most suitable to your operating system, on windows that would typically be `choco`, on MacOs `brew` and on linux it could be `snap`, however it is up to you what you prefer. If you happen to have some of the tools installed already, you may want to write `upgrade` instead of ìnstall`in the commands below.
 
+* Please install `[choco](https://chocolatey.org/install)` on Windows, if you do not already have it installed. Be sure to rightclick on the Powershell and select run as Administrator
+* Please install `[brew](https://brew.sh/)` on Mac, if you do not already have iyt installed.
+* May install what you like on Linux (You probably already did), however `[brew](https://docs.brew.sh/Homebrew-on-Linux)` could work for you on linux, if you are not already familiar with another package setup. 
+
+
 ### Docker Desktop
 As we will be working with a local Kubernetes installation based on Docker a Docker Desktop
 distribution needs to be installed.
 
-See [Install Docker Engine](https://docs.docker.com/engine/install/).
+See [Install Docker Engine](https://docs.docker.com/engine/install/). 
+Be sure to find your Operating system and follow the instructions for that.
+
+It may also be possible to install the desktop using your package manager
+
+**brew**
+
+```
+$ brew install --cask docker  
+```
+
+**choco**
+
+```
+$ choco install docker-desktop
+```
+
+### Git CLI
+
+We will be collecting workshop from github, which is why you need a git client.
+
+**brew**
+
+```
+$ brew install git
+```
+
+**choco**
+
+```
+$ choco install git
+```
+
+### Curl
+
+We will be testing our deployments, which is why you need curl.
+
+**brew**
+
+```
+$ brew install curl
+```
+
+**choco**
+
+```
+$ choco install curl
+```
+
 
 ### Kubernetes CLI
 The `kubectl` cli allows access to interact with the Kubernetes cluster. This can be installed
@@ -151,8 +207,15 @@ In the same way install `curl`, `docker` and `git`if you do not have these insta
 
 Alternate [Installing Helm](https://helm.sh/docs/intro/install/)
 
+### Checking your install
 
-You can check that you have the tools available running.
+You can check that you have the tools available running. 
+You need to be administrator of your machine, and please check the session about Windows if you are using a Windows machine.
+And please observe if you are using a corporate controlled machine, that may include blocking software. 
+Which may make it difficult to get a successful check.
+
+Make sure that the docker destop is running, if you are on windows you may see a virtualisation warning, in order to fix that you will have to go into the bios of the machine and enable virtualisation. 
+
 
 ```console
 docker version
@@ -160,10 +223,10 @@ git version
 kind version
 helm version
 k9s version
-curl version
+curl --version
 ```
 
-This should inform you about the `docker` and `kind` versions, furthermore you may check if any clusters are already running.
+This should inform you about the `docker`, `kind` etc. whether they are installed and your PATH is updated, furthermore you may check if any clusters are already running. If you are experienceing any problems with the check above, you rerun the brew command `brew install <tool>`as `brew reinstall <tool>` and `choco install <tool>`as `choco install <tool> --force`
 
 Make sure you have started the installed `docker desktop`.
 
@@ -172,16 +235,18 @@ Please remember this is created for you to learn basic suff about kubernetes and
 When you work through the workshops, by all means copy and paste commands, to avoid being stuck in misspelled commands. 
 Please do reflect over each thing you do and try to deduct, what you did and and what was the result. 
 
+## Excercises
 - Lets start with what you can do in this room today
-  - Lets get you signed up for Cloud Native Aalborg (https://community.cncf.io/aalborg/ and `join`)
-  - Lets make sure you know where you get a coffe and a chat about Cloud Native and Kubernetes
+  - Let us get you signed up for Cloud Native Aalborg (https://community.cncf.io/aalborg/ and `join`)
+  - Let us make sure you know where you get a coffe and a chat about Cloud Native and Kubernetes
   - Experiment with it yourself on your laptop ifo Kubernetes (there are a number of distributions and also some for you laptop)
     - [kubernetes](./simple-kubernetes) - start with this one
     - [ingress](./simple-kubernetes-with-ingress) - then go on to this one
     - [observability](./observability)
     - [kubedoom](./kubedoom)
+    - or one of the other workshops
   
-## If you are using windows on your laptop
+## If you are using Windows on your laptop
 There are some few thing that may work in a different way under windows.
 
 You may want to copy the lines from the shell scripts under each folder instead using the scripts:
@@ -223,7 +288,7 @@ There are some articles that you can follow if you want to do more:
 
 - https://www.weave.works/blog/deploying-an-application-on-kubernetes-from-a-to-z
 
-- https://github.com/javajon/kubernetes-observability (gammel)
+- https://github.com/javajon/kubernetes-observability (old)
 
 - https://github.com/evry-bergen/kubernetes-workshop/tree/master/labs/1-pods
 
