@@ -79,5 +79,5 @@ Play away....
 
 ## Clean up
 ```console
-$ ./delete_cluster.sh
+./delete_cluster.sh
 ```

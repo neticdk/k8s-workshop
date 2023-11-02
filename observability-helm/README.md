@@ -13,14 +13,14 @@ _Note_ this example requires the installation of the Helm package manager for Ku
 Create cluster (`create_cluster.sh`):
 
 ```console
-$ kind create cluster --name observability-helm --config=kind-config.yaml
+kind create cluster --name observability-helm --config=kind-config.yaml
 ```
 
 Install the monitoring stack (`install.sh`):
 
 ```console
-$ helm repo add netic-oaas https://neticdk.github.io/k8s-oaas-observability
-$ helm upgrade -i oaas-observability netic-oaas/oaas-observability \
+helm repo add netic-oaas https://neticdk.github.io/k8s-oaas-observability
+helm upgrade -i oaas-observability netic-oaas/oaas-observability \
   --set opentelemetry-operator.enabled=false \
   --set vector-agent.enabled=false \
   --set grafana.adminPassword=workshop
@@ -35,7 +35,7 @@ It is not possible to access dashboards showing the data from the cluster throug
 port-forwarding to the Grafana pod.
 
 ```console
-$ kubectl port-forward svc/oaas-observability-grafana 3000:80
+kubectl port-forward svc/oaas-observability-grafana 3000:80
 ```
 
 Go to http://localhost:3000 login is `admin` and password is `workshop`.
@@ -47,5 +47,5 @@ We probably learned that using helm can be an easy way to deploy a bunch of stuf
 
 ## Clean up
 ```console
-$ ./delete_cluster.sh
+./delete_cluster.sh
 ```
