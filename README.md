@@ -80,13 +80,13 @@ It may also be possible to install the desktop using your package manager
 **brew**
 
 ```
-$ brew install --cask docker  
+brew install --cask docker  
 ```
 
 **choco**
 
 ```
-$ choco install docker-desktop
+choco install docker-desktop
 ```
 
 ### Git CLI
@@ -96,13 +96,13 @@ We will be collecting workshop from github, which is why you need a git client.
 **brew**
 
 ```
-$ brew install git
+brew install git
 ```
 
 **choco**
 
 ```
-$ choco install git
+choco install git
 ```
 
 ### Curl
@@ -112,13 +112,13 @@ We will be testing our deployments, which is why you need curl.
 **brew**
 
 ```
-$ brew install curl
+brew install curl
 ```
 
 **choco**
 
 ```
-$ choco install curl
+choco install curl
 ```
 
 
