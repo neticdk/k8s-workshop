@@ -7,7 +7,7 @@ spec:
   minAvailable: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: hello-foo-pdb-app
+      app.kubernetes.io/name: hello-foo-pdb
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
@@ -17,5 +17,5 @@ spec:
   minAvailable: 3
   selector:
     matchLabels:
-      app.kubernetes.io/name: hello-bar-pdb-app
+      app.kubernetes.io/name: hello-bar-pdb
 ---      

@@ -380,7 +380,7 @@ spec:
   minAvailable: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: hello-foo-pbb-app
+      app.kubernetes.io/name: hello-foo-pbb
 ```
 
 ```yaml
@@ -392,7 +392,7 @@ spec:
   minAvailable: 3
   selector:
     matchLabels:
-      app.kubernetes.io/name: hello-bar-pdb-app
+      app.kubernetes.io/name: hello-bar-pdb
 ```
 We create these two podDisruptionBudgets:
 ```console
@@ -485,31 +485,16 @@ kubectl get deployments
 ```
 ```console
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       6/80    80           6           8m48s
-hello-bar-pdb-app   19/80   80           19          4m30s
+hello-bar-app       17/80   80           17          8m48s
+hello-bar-pdb-app   8/80    80           8           4m30s
 hello-baz-app       0/80    80           0           7m59s
 hello-foo-app       80/80   80           80          7m26s
 hello-foo-pdb-app   80/80   80           80          6m7s
 hello-foobar-app    0/80    80           0           21m
 ```
 
-We see that the high priority pods are complete, however the lower priorities are only 6 of desired 80 and 19 of desired 80.
+We see that the high priority pods are complete, however the lower priorities are only 8 of desired 80 and 17 of desired 80.
 Lets turn the nob for high priority workloads to see how the prioritation works. we scale the higher priority pods to a larger number.
-
-```console
-kubectl scale --replicas=105 deployment/hello-foo-pdb-app
-```
-
-```console
-kubectl get deployments
-NAME                READY     UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       3/80      80           3           23m
-hello-bar-pdb-app   6/80      80           6           19m
-hello-baz-app       0/80      80           0           22m
-hello-foo-app       80/80     80           80          21m
-hello-foo-pdb-app   105/105   105          105         20m
-hello-foobar-app    0/80      80           0           36m
-```
 
 Lets find the point where we force kubernetes to make a decision.
 
@@ -532,15 +517,14 @@ kubectl scale --replicas=110 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
 kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       3/80      80           3           25m
-hello-bar-pdb-app   3/80      80           3           21m
+hello-bar-app       2/80      80           2           25m
+hello-bar-pdb-app   4/80      80           4           21m
 hello-baz-app       0/80      80           0           24m
 hello-foo-app       80/80     80           80          24m
 hello-foo-pdb-app   110/110   110          110         23m
 hello-foobar-app    0/80      80           0           38m
 ```
-Now we hit the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`.
-Which means is we demand further scaling for higher priority pods, kubernetes can no longer keep this budget.
+PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app` is still on.
 
 
 ```console
@@ -548,33 +532,31 @@ kubectl scale --replicas=111 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
 kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       3/80      80           3           25m
-hello-bar-pdb-app   2/80      80           2           21m
+hello-bar-app       1/80      80           1           25m
+hello-bar-pdb-app   4/80      80           4           21m
 hello-baz-app       0/80      80           0           25m
 hello-foo-app       80/80     80           80          24m
 hello-foo-pdb-app   111/111   111          111         23m
 hello-foobar-app    0/80      80           0           39m
 ```
 
-Now we get to the point where this reduction causes the break of the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`.
+Kubernetes tries to keep both workloads running by balancing the number of pods between the pods having the same priority. 
+Now we get closer to the point where the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app` is comming under pressure.
 This point is very interesting as this indicates that kubernetes selects the pods that would not rely on a minAvailable set of pods.
-One might have expected that the `hello-bar-app` was chosen over the `hello-bar-pdb-app` and that would have ended the other way around.
-One could have expected that `hello-bar-app ` was 2 at this point and `hello-bar-pdb-app` was 3.
 
 ```console
 kubectl scale --replicas=112 deployment/hello-foo-pdb-app 
 deployment.apps/hello-foo-pdb-app scaled
 kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       2/80      80           2           26m
-hello-bar-pdb-app   2/80      80           2           21m
+hello-bar-app       1/80      80           1           26m
+hello-bar-pdb-app   4/80      80           4           21m
 hello-baz-app       0/80      80           0           25m
 hello-foo-app       80/80     80           80          24m
 hello-foo-pdb-app   112/112   112          112         23m
 hello-foobar-app    0/80      80           0           39m
 ```
-Now we are below the point and we have brokenthe PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`.
-Kubernetes tries to keep both workloads running by balancing the number of pods between the pods having the same priority. 
+Still keeping the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`.
 One could have expected that `hello-bar-app ` was 1 at this point and `hello-bar-pdb-app` was 3.
 
 ```console
@@ -582,32 +564,31 @@ kubectl scale --replicas=114 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
 kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       2/80      80           2           26m
-hello-bar-pdb-app   1/80      80           1           22m
+hello-bar-app       0/80      80           0           26m
+hello-bar-pdb-app   3/80      80           3           22m
 hello-baz-app       0/80      80           0           25m
 hello-foo-app       80/80     80           80          25m
 hello-foo-pdb-app   114/114   114          114         24m
 hello-foobar-app    0/80      80           0           39m
 ```
 
-Now we are well below the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`.
-One could have expected that `hello-bar-app ` was 0? at this point and `hello-bar-pdb-app` was 3? - however how should kubernetes know, they have the same priority.
+Now we are at the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`.
 
 ```console
 kubectl scale --replicas=115 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
 kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       2/80      80           2           26m
-hello-bar-pdb-app   0/80      80           0           22m
+hello-bar-app       0/80      80           0           26m
+hello-bar-pdb-app   3/80      80           3           22m
 hello-baz-app       0/80      80           0           26m
 hello-foo-app       80/80     80           80          25m
 hello-foo-pdb-app   115/115   115          115         24m
 hello-foobar-app    0/80      80           0           40m
 ```
-Now we are well below the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`.
+We are still at the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`.
 
-Below we continue to increrase the number of pods that is desired to get running until exhaustion.
+Below we continue to increrase the number of pods that is desired to get running until exhaustion and make sure that it needs to preempt within the poddisruptionbudget.
 
 Scale to 117
 
@@ -616,27 +597,17 @@ kubectl scale --replicas=117 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
 kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       1/80      80           1           52m
-hello-bar-pdb-app   0/80      80           0           47m
+hello-bar-app       0/80      80           0           52m
+hello-bar-pdb-app   1/80      80           1           47m
 hello-baz-app       0/80      80           0           51m
 hello-foo-app       80/80     80           80          50m
 hello-foo-pdb-app   117/117   117          117         49m
 hello-foobar-app    0/80      80           0           65m
 ```
-Scale to 118
 
-```console
-kubectl scale --replicas=118 deployment/hello-foo-pdb-app
-deployment.apps/hello-foo-pdb-app scaled
-kubectl get deployments
-NAME                READY     UP-TO-DATE   AVAILABLE   AGE
-hello-bar-app       1/80      80           1           52m
-hello-bar-pdb-app   0/80      80           0           48m
-hello-baz-app       0/80      80           0           51m
-hello-foo-app       80/80     80           80          51m
-hello-foo-pdb-app   118/118   118          118         49m
-hello-foobar-app    0/80      80           0           65m
-```
+Now we see that the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app` was no longer able to be met.
+
+
 Scale to 119
 
 ```console
@@ -684,9 +655,10 @@ hello-foobar-app    0/80      80           0           69
 
 Now we have exhausted the ability for the cluster to run further pods. 
 
-Looking at the results from above you can see how kubernetes priotises and what the edge cases seems to be. 
+Looking at the results from above you can see how kubernetes prioritises and what the edge cases seems to be. 
+Priority rules what is running and not.
 
-Scale the applications down:
+Scale the applications down for being able to access all of them:
 
 ```console
 kubectl scale --replicas=12 deployment/hello-foo-pdb-app
@@ -700,10 +672,10 @@ kubectl get deployments
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       8/8     8            8           92m
 hello-bar-pdb-app   6/6     6            6           87m
-hello-baz-app       44/80   80           44          91m
+hello-baz-app       41/80   80           41          91m
 hello-foo-app       10/10   10           10          90m
 hello-foo-pdb-app   12/12   12           12          89m
-hello-foobar-app    22/80   80           22          105m
+hello-foobar-app    25/80   80           25          105m
 ```
 
 Now we see that the capasity of the cluster is balancing  back towards a more balanced setup.
