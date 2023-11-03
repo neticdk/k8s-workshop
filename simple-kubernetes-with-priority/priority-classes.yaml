@@ -1,0 +1,27 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: higest-priority
+value: 0000090000
+preemptionPolicy: "PreemptLowerPriority"
+globalDefault: false
+description: "This is the higest Priority Class value for this example"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: medium-priority
+value: 0000080000
+preemptionPolicy: "PreemptLowerPriority"
+globalDefault: false
+description: "This is the medium Priority Class value for this example"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: low-priority
+value: 0000060000
+preemptionPolicy: "PreemptLowerPriority"
+globalDefault: true
+description: "This is the normal and lowest Priority Class value for this example"
+---

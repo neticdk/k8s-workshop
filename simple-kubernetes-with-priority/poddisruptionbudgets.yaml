@@ -1,0 +1,21 @@
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: high-prio-pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-foo-pdb
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: medium-prio-pdb
+spec:
+  minAvailable: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-bar-pdb
+---      

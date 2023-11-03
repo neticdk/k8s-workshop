@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: hello-foobar
+    app.kubernetes.io/instance: hello-foobar
+  name: hello-foobar-app
+spec:
+  replicas: 16
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-foobar
+      app.kubernetes.io/instance: hello-foobar
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-foobar
+        app.kubernetes.io/instance: hello-foobar
+    spec:
+      containers:
+        - command:
+            - /agnhost
+            - netexec
+            - --http-port=8080
+          image: registry.k8s.io/e2e-test-images/agnhost:2.39
+          name: hello-foobar-app
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources: 
+            limits: 
+              cpu: 505m
+              memory: 25Mi
+            requests: 
+              cpu: 185m
+              memory: 25Mi
+
+
