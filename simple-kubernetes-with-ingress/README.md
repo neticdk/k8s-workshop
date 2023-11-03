@@ -9,7 +9,7 @@ We will use a kind cluster in this excercise, because it is easy to construct on
 Kind builds on docker and thus you should have docker installed an running.
 
 ```console
-$ kind create cluster --name ingress --config=config.yaml
+kind create cluster --name ingress --config=config.yaml
 ```
 
 ## Install ingress controller
@@ -22,14 +22,14 @@ infrastructures. Here we are running on a local machine and we will use nginx as
 To see what is actually contained in the definition of an ingress controller and install it:
 
 ```console
-$ cat ingress-controller.yaml 
-$ kubectl create -f ./ingress-controller.yaml
+cat ingress-controller.yaml 
+kubectl create -f ./ingress-controller.yaml
 ```
 
 Wait for deployment to be ready.
 
 ```console
-$ kubectl wait pod -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx,app.kubernetes.io/component=controller --for condition=Ready  --timeout=45s
+kubectl wait pod -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx,app.kubernetes.io/component=controller --for condition=Ready  --timeout=45s
 ```
 
 In the remaining parts of the workshop we will just use the default namespace for making it easier to write the commands you need to write.
@@ -39,13 +39,13 @@ In the remaining parts of the workshop we will just use the default namespace fo
 Take a look at the applications, which are basically two deployments with one replica (pod) each and one deployment with 4 replicas.
 
 ```console
-$ cat deployments.yaml 
+cat deployments.yaml 
 ```
 
 Progess to install these two application as:
 
 ```console
-$ kubectl create -f ./deployments.yaml
+kubectl create -f ./deployments.yaml
 ```
 
 ## Install the services for the applications
@@ -53,25 +53,25 @@ $ kubectl create -f ./deployments.yaml
 Take a look at the services, which are in front of the applications.
 
 ```console
-$ cat services.yaml 
+cat services.yaml 
 ```
 
 Then install the services.
 
 ```console
-$ kubectl create -f ./services.yaml
+kubectl create -f ./services.yaml
 ```
 
 ## Install the ingress for the services
 Take a look at the local ingress definition for the services, where you will find 3 definitions. Two of these for `foo` and `bar` and one to use in a while called `baz`.
 
 ```console
-$ cat ingress.yaml 
+cat ingress.yaml 
 ```
 Lets us install the ingress
 
 ```console
-$ kubectl create -f ./ingress.yaml
+kubectl create -f ./ingress.yaml
 ```
 
 ## Accessing the Application
@@ -79,26 +79,26 @@ Now when you access the application it is possible to use the Ingress Controller
 
 To get the `hello-bar` application
 ```console
-$ curl localhost/hello-bar/hostname
+curl localhost/hello-bar/hostname
 ```
 which takes you through the `hello-ingress` ingress to the `hello-bar-service` service to the `hello-bar-app` pod.
 
 To get the `hello-foo` application
 ```console
-$ curl localhost/hello-foo/hostname
+curl localhost/hello-foo/hostname
 ```
 which takes you through the `hello-ingress` ingress to the `hello-foo-service` service to the `hello-foo-app` pod
 
 To get the `hello-baz` application 
 ```console
-$ curl localhost/hello-baz/hostname
+curl localhost/hello-baz/hostname
 ```
 
 which takes you through the `hello-ingress` ingress through the `hello-baz-service` service to the `hello-baz-app` pods. The
 `hello-baz-app` deployment contains 4 replicas. Try calling the hello-baz application several times using:
 
 ```console
-$ curl localhost/hello-baz/hostname
+curl localhost/hello-baz/hostname
 ```
 
 and see that it returns different names, which informs you that traffic is sent to different pods, i.e., the loadbalancing
@@ -108,13 +108,13 @@ This means you now have an application deployed across "nodes" and you receive t
 You can see that by examininig the names of the pods responding and knowing how these are distributed across "nodes" in the cluster:
 
 ```console
-$ kubectl get pods -o wide
+kubectl get pods -o wide
 ```
 
 Or if you want to see the baz app isolated:
 
 ```console
-$ kubectl get pods -o wide | grep baz
+kubectl get pods -o wide | grep baz
 ````
 
 ## Virtual Hosting
@@ -124,21 +124,21 @@ http request (hello-foo, hello-bar, hello-baz). The same ingress controller can 
 requested hostname. There is an example of this in the `multiple-domains` folder - take a look at the ingress resource.
 
 ```console
-$ cat multiple-domains/ingress.yaml
+cat multiple-domains/ingress.yaml
 ```
 
 and apply the specification:
 
 ```console
-$ kubectl apply -f ./multiple-domains/ingress.yaml
+kubectl apply -f ./multiple-domains/ingress.yaml
 ```
 
 Now check the response when calling using different hostnames:
 
 ```console
-$ curl foo-127-0-0-1.nip.io/hostname
-$ curl bar-127-0-0-1.nip.io/hostname
-$ curl baz-127-0-0-1.nip.io/hostname
+curl foo-127-0-0-1.nip.io/hostname
+curl bar-127-0-0-1.nip.io/hostname
+curl baz-127-0-0-1.nip.io/hostname
 ```
 
 _Note_ the three domains (foo-127-0-0-1.nip.io, foo-127-0-0-1.nip.io, foo-127-0-0-1.nip.io) all resolve to `127.0.0.1` (i.e., localhost) but the ingress controller will route based on the http host header.
@@ -157,7 +157,7 @@ Please tell us your feedback for us to be able to make a better job the next tim
   - the notes and accompanying information?
 
 # Thank you
-If you wnat to know more about Cloud Native, Cloud Native Aalborg, Netic,kubernetes ot about the Secure Cloud Stack, please get in touch with us either in Netic, on Slack via Cloud Native Nordics or meet us in the Cloud Native Aalborg (or other cities) Meetups, or drop by for a cup of coffee (please write beforehand as we would like to be there on location).
+If you want to know more about Cloud Native and want to get together with other people sharing the desire to work with Cloud Native, Cloud Native Aalborg, Netic,kubernetes ot about the Secure Cloud Stack, please get in touch with us either in Netic, on Slack via Cloud Native Nordics or meet us in the Cloud Native Aalborg (or other cities) Meetups, or drop by for a cup of coffee (please write beforehand as we would like to be there on location).
 
 ## Peace
 

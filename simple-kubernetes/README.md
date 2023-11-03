@@ -15,7 +15,7 @@ in this example, because it is easy to use to construct a Kubernetes cluster on 
 tear down as well.
 
 ```console
-$ kind get clusters
+kind get clusters
 ```
 
 Creating a new `kind` cluster simply run.
@@ -30,30 +30,31 @@ $ kind create cluster
 We deploy an application:
 
 ```console
-$ kubectl create deployment hello-app --image=registry.k8s.io/e2e-test-images/agnhost:2.39 -- /agnhost netexec --http-port=8080
+kubectl create deployment hello-app --image=registry.k8s.io/e2e-test-images/agnhost:2.39 -- /agnhost netexec --http-port=8080
 ```
+You cannot yet connect to the application, however you will be able to once a portforward has been created, which will happer later.
 
 We check that the application was created:
 
 ```console
-$ kubectl get deployments
+kubectl get deployments
 ```
 
 The deployment is actually controlling a container which exists inside a pod  
 
 ```console
-$ kubectl get pods
+kubectl get pods
 ```
 
 So what happened:
 
 ```console
-$ kubectl get events
+kubectl get events
 ```
 
 To further explore what `kubecetl` can do for you
 ```console
-$ kubectl --help
+kubectl --help
 ```
 
 ## Connectivity to the Cluster
@@ -67,25 +68,25 @@ The configuration may contain a number of different contexts and the one we are 
 can be found with:
 
 ```console
-$ kubectl config current-context
+kubectl config current-context
 ```
 
 Btw. what other contexts do we have?
 
 ```console
-$ kubectl config get-contexts
+kubectl config get-contexts
 ```
 
 Current context is normally in this workshop `kind-kind`.
 
 ```console
-$ kubectl config view | grep kind-kind
+kubectl config view | grep kind-kind
 ```
 
 If you happen to work on windows and did not install grep, you may use:
 
 ```console
-$ kubectl config view | Findstr kind-kind
+kubectl config view | Findstr kind-kind
 ```
 
 ## Expose the Application
@@ -94,26 +95,26 @@ An application which can not be used is not much fun is it?
 Thus we will expose the application:
 
 ```console
-$ kubectl expose deployment hello-app --port=8080
+kubectl expose deployment hello-app --port=8080
 ```
 
 Lets check what we got from the exposure:
 
 ```console
-$ kubectl get services
+kubectl get services
 ```
 
 Lets try to make a connection directly to the service:
 
 ```console
-$ kubectl port-forward service/hello-app 30070:8080 
+kubectl port-forward service/hello-app 30070:8080 
 ```
 
 Find a browser and go to http://localhost:30070 and see the current time as the answer
 
 If you have curl installed, you can achieve the same using:
 ```console
-$ curl http://localhost:30070
+curl http://localhost:30070
 ```
 
 What you see is the current time, along the lines of:
@@ -136,7 +137,7 @@ into a particular "space" inside the cluster which is named `default`.
 This can be seen, if you make the following call:
 
 ```console
-$ kubectl get namespaces
+kubectl get namespaces
 ```
 
 You see one of these namespaces is called "default", and if we do not specify anything concerning namespaces
@@ -144,13 +145,13 @@ You see one of these namespaces is called "default", and if we do not specify an
 
 We can use a short form for `namespaces` called `ns`
 ```console
-$ kubectl get ns
+kubectl get ns
 ```
 
 There is a way to get the specification for the default namespace.
 
 ```console
-$ kubectl get ns default -o yaml
+kubectl get ns default -o yaml
 ```
 
 which means we ask for the contents of the "namespace object" called "default" and requests to have the in the form of YAML.
@@ -175,18 +176,18 @@ status:
 
 For the fun of it we could create another one:
 ```console
-$ kubectl create ns forthefunofit
+kubectl create ns forthefunofit
 ```
 
 and see that it is in the list of namespaces:
 
 ```console
-$ kubectl get ns
+kubectl get ns
 ```
 
 You should now see that there is a namespace in the list called "forthefunofit":
 ```console
-$ kubectl get ns forthefunofit -o yaml
+kubectl get ns forthefunofit -o yaml
 ```
 
 which means we ask for the contents of the "namespace object" called "forthefunofit" and requests to have the in the form of YAML
@@ -211,19 +212,19 @@ status:
 There is nothing deployed into this namespace and thus it should be empty:
 
 ```console
-$ kubectl get all -n forthefunofit 
+kubectl get all -n forthefunofit 
 ```
 
 If we look back to the "default" namespace and does the same, we see that:
 
 ```console
-$ kubectl get all -n default 
+kubectl get all -n default 
 ```
 
 or
 
 ```console
-$ kubectl get all
+kubectl get all
 ```
 
 returns the same result, which means the two commands are equvalent.
@@ -233,13 +234,13 @@ You can see a hello-app : pod, replicaset, deployment, service
 For the sake of completeness we can take a look at the other objects we have worked with sofar:
 
 ```console
-$ kubectl get deployments hello-app  -o yaml
+kubectl get deployments hello-app  -o yaml
 ```
 
 Or address the type and object in one single attribute:
 
 ```console
-$ kubectl get deployment.apps/hello-app  -o yaml
+kubectl get deployment.apps/hello-app  -o yaml
 ```
 Tak a look at the YAML and see the replicas number equals 1, that it has metadata labels and that you can see the image from the initial deployment under spec image.
 
@@ -247,44 +248,44 @@ Tak a look at the YAML and see the replicas number equals 1, that it has metadat
 And you  can do the same for the Service:
 
 ```console
-$ kubectl get service/hello-app  -o yaml
+kubectl get service/hello-app  -o yaml
 ```
 
 Whereas when you to do that for pods you can do it as this - starting to find the pods:
 
 ```console
-$ kubectl get pods
+kubectl get pods
 ```
 
 And then ask for the object in YAML (remeber to substitute the name of the pod with what you see fron the output above):
 
 
 ```console
-$ kubectl get pod/hello-app-xx...xdbbc-yynl -o yaml
+kubectl get pod/hello-app-xx...xdbbc-yynl -o yaml
 ```
 
 Or in a single command like this:
 
 ```console
-$ kubectl get pods $(kubectl get pods -template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}') -o yaml
+kubectl get pods $(kubectl get pods -template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}') -o yaml
 ```
 
 
 If you remember the output from the Deployment object, you may recall that there was a line stating something about replicas:
 ```console
-$ kubectl get deployment.apps/hello-app -o jsonpath='{.spec.replicas}'
+kubectl get deployment.apps/hello-app -o jsonpath='{.spec.replicas}'
 ```
 
 And that was default set to 1. This means that the application is supposed to have only one running pod. This can be seen by:
 ```console
-$ kubectl get pods
+kubectl get pods
 ```
 
 You can see one pod prefixed with `hello-app` and that 1 of 1 container is READY, let us try to look at the the actual object
 handling the replicas for the deployment:
 
 ```console
-$  kubectl get rs
+ kubectl get rs
 ```
 
 Looking at the output from above you can see that:
@@ -297,13 +298,13 @@ Which means that 1 instance is desired of the deployment pod, the current number
 
 And in order to follow that happening we can issue a command that sticks around and watches the changes e.g.:
 ```console
-$ kubectl get rs -w
+kubectl get rs -w
 ```
 
 Lets do the scaling from a different terminal window e.g. change the replica size to 4 and watch these numbers change:
 
 ```console
-$ kubectl scale --replicas=4 deployment/hello-app
+kubectl scale --replicas=4 deployment/hello-app
 ```
 
 Going back to the "sticking" view you should see:
@@ -322,7 +323,7 @@ hello-app-xxyyynnncd   4         4         4       9m
 If we check the deployment object again:
 
 ```console
-$ kubectl get deployment.apps/hello-app -o jsonpath='{.spec.replicas}'
+kubectl get deployment.apps/hello-app -o jsonpath='{.spec.replicas}'
 ```
 
 You should see the number 4.
@@ -334,19 +335,19 @@ As an example of that we just scaled the deployment to a replica size of 4, so w
 Lets look at the pods we have:
 
 ```console
-$ kubectl get pods 
+kubectl get pods 
 ```
 
 Lets try to delete one of the pods:
 ```console
-$ kubectl delete pod hello-app-xxyyynnncd-kklkr1r 
+kubectl delete pod hello-app-xxyyynnncd-kklkr1r 
 ```
 
 You see that there are 4 pods running soon again, however the pod you just deleted is gone and replaced with a new one,
 the result being that the desired state is obtained again.
 
 ```console
-$ kubectl get pods 
+kubectl get pods 
 ```
 
 This is what sometimes is referred to as "self-healing", and that increases the robustness for keeping stuff running.
@@ -356,19 +357,19 @@ This is what sometimes is referred to as "self-healing", and that increases the 
 Getting the logs from a given pod
 
 ```console
-$ kubectl logs pod/hello-app-xxyyynnncd-brre2nn
+kubectl logs pod/hello-app-xxyyynnncd-brre2nn
 ```
 
 In the event that the pods has muliple running containers - you can specify the individuual container:
 
 ```console
-$ kubectl logs pod/hello-app-xxyyynnncd-brre2nn -c agnhost
+kubectl logs pod/hello-app-xxyyynnncd-brre2nn -c agnhost
 ```
 
 Or if you want to have logs based on an assigned label:
 
 ```console
-$ kubectl logs -l app=hello-app 
+kubectl logs -l app=hello-app 
 ```
 
 There are plenty of commands that you can use for all sorts of things, please consult the
@@ -406,7 +407,7 @@ deploy into a target namespace called "hello-workshop"
 Lets start creating the namespace, but before that let us take a look at a very simple namespace definition:
 
 ```console
-$ cat namespace.yaml 
+cat namespace.yaml 
 ```
 
 If you do not find the file, please switch to the `simple-kubernetes`folder.
@@ -423,12 +424,12 @@ metadata:
 Let us create that in the cluster:
 
 ```console
-$ kubectl create -f ./namespace.yaml
+kubectl create -f ./namespace.yaml
 ```
 
 Lets list the namespaces:
 ```console
-$ kubectl get ns
+kubectl get ns
 ```
 
 That may include the previously created namespace "forthefunofit" and then it would look like:
@@ -447,13 +448,13 @@ local-path-storage   Active   19m
 If we would delete the namespace we just created, that could be done like this in the declarative way ***However - do not delete it as we shall be using it later***:
 
 ```console
-$ kubectl delete -f ./namespace.yaml
+kubectl delete -f ./namespace.yaml
 ```
 
 If we want to do the same for the "forthefunofit" this can be done in a imperative way like:
 
 ```console
-$ kubectl delete ns forthefunofit
+kubectl delete ns forthefunofit
 ```
 
 The resulting list would be:
@@ -507,13 +508,13 @@ spec:
 If you look carefully, you can see the `hello-app` metadata namespace that it is targeted for the `hello-workshop`
 
 ```console
-$ kubectl create -f ./deployment.yaml
+kubectl create -f ./deployment.yaml
 ```
 
 Try to do overwrite the namespace by supplying to the command line, e.g.:
 
 ```console
-$ kubectl create -f ./deployment.yaml -n hello-workshop-non-existing-namespace
+kubectl create -f ./deployment.yaml -n hello-workshop-non-existing-namespace
 ```
 
 That will fail, however had it been a valid namespace it would have been deployed there as well.
@@ -521,7 +522,7 @@ That will fail, however had it been a valid namespace it would have been deploye
 Lets look at what has been deployed in the "hello-workshop" namespace.
 
 ```console
-$ kubectl get all -n hello-workshop
+kubectl get all -n hello-workshop
 ```
 
 This looks very much like what we saw under the imperative paradigm for the "default" namespace above after deploying the `hello-app`.
@@ -540,7 +541,7 @@ replicaset.apps/hello-app-57d9ccdbbc   1         1            1           1m18s
 So what did we deploy:
 
 ```console
-$ cat deployment.yaml
+cat deployment.yaml
 ```
 Which looks like this:
 ```yaml
@@ -574,7 +575,7 @@ spec:
 If we do the same readback from the cluster as we did above under the imperative paradigm, we see:
 
 ```console
-$ kubectl get deployments.apps/hello-app -n hello-workshop -o yaml
+kubectl get deployments.apps/hello-app -n hello-workshop -o yaml
 ```
 
 ```yaml
@@ -653,7 +654,7 @@ not something we will cover in this workshop.
 And what about the exposure we did above, how does that look as Declarative object?
 
 ```console
-$ cat service.yaml
+cat service.yaml
 ```
 
 Which looks like this:
@@ -679,19 +680,19 @@ spec:
 Let us create that (we leave the namespace on the command line out as it is specified in the declaration):
 
 ```console
-$ kubectl create -f ./service.yaml
+kubectl create -f ./service.yaml
 ```
 
 We check that a service has actually been created in the "hello-workshop" namespace.
 
 ```console
-$ kubectl get svc -n hello-workshop
+kubectl get svc -n hello-workshop
 ```
 
 And we take a closer look at it:
 
 ```console
-$ kubectl get svc hello-app -n hello-workshop -o yaml
+kubectl get svc hello-app -n hello-workshop -o yaml
 ```
 
 ```yaml
@@ -764,19 +765,19 @@ You change the number of replica in the deployment yaml file as:
 If you want to want the scaling, you can do the same as you did above for the imperative paradigm:
 
 ```console
-$ kubectl get rs -w -n hello-workshop
+kubectl get rs -w -n hello-workshop
 ```
 
 And then you apply that change to the cluster by using a kubectl apply:
 
 ```console
-$ kubectl apply -f ./deployment.yaml
+kubectl apply -f ./deployment.yaml
 ```
 
 And issue a:
 
 ```console
-$ kubectl get all -n hello-workshop
+kubectl get all -n hello-workshop
 ```
 
 Which should tell you that there are four instances of hello-app running, in case you were wondering what you saw on the command line about "kubectl.kubernetes.io/last-applied-configuration" or in its entirety:
@@ -889,7 +890,7 @@ If you want to scale it further, eg. to 8 change the deployment.yaml file replic
 Control that the number of instances match the number of replicas:
 
 ```console
-$ kubectl get deployments.apps/hello-app -n hello-workshop
+kubectl get deployments.apps/hello-app -n hello-workshop
 ```
 
 ## What did we learn
@@ -912,7 +913,7 @@ The image is from [kubernetes.io, e.g.](https://kubernetes.io/docs/concepts/over
 The simple cluster we have used is a single "node" cluster, where the cluster node is a docker container running on your local machine.
 
 ```console
-$ kubectl get nodes
+kubectl get nodes
 ```
 
 which will show:
@@ -925,7 +926,7 @@ kind-control-plane   Ready    control-plane   94m   v1.25.3
 if you look for the docker container constituting the node:
 
 ```console
-$ docker ps
+docker ps
 ```
 You see that the "node" is:
 
@@ -939,20 +940,20 @@ Normally you would have a multinode kubernetes clusters running, and typically i
 If you go into the `multi-node-cluster` folder, you can do something very similar on your local maschine:
 
 ```console
-$ ./create_cluster.sh
+./create_cluster.sh
 ```
 
 The image shows a control-plane and 2 worker nodes, in our case we have a single control-plane and 2 worker nodes, which you may see
 if you execute:
 
 ```console
-$ kubectl get nodes
+kubectl get nodes
 ```
 
 And from docker you can se them as:
 
 ```console
-$ docker ps
+docker ps
 ```
 
 ```console
@@ -969,7 +970,7 @@ dual setup you would go for 4 or more by a factor of 2.
 If you want to have a view over "everything" that is running in the newly created cluster you can do so by:
 
 ```console
-$ kubectl get all -A
+kubectl get all -A
 ```
 
 This will show you the stuff like:
@@ -991,23 +992,23 @@ The images are from [kubernetes.io, e.g.]https://kubernetes.io/docs/tutorials/ku
 if you want, you can try to deploy the namespace 
 
 ```console
-$ kubectl create -f ../namespace.yaml
+kubectl create -f ../namespace.yaml
 ```
 And the application:
 
 ```console
-$ kubectl create -f ../deployment.yaml
+kubectl create -f ../deployment.yaml
 ```
 And possibly change the replicaset size to 4 and
 
 ```console
-$ kubectl apply -f ../deployment.yaml
+kubectl apply -f ../deployment.yaml
 ```
 
 And see which pod is running on which node:
 
 ```console
-$ kubectl get pods -n hello-workshop -o wide
+kubectl get pods -n hello-workshop -o wide
 ```
 
 Which lists the pods include some extra information.
@@ -1023,7 +1024,7 @@ hello-app-57d9ccdbbc-w9ql7   1/1     Running   0          4s    10.244.0.14   si
 If you had deployed that in the "default" namespace, the same would be displayed using:
 
 ```console
-$ kubectl get pods -o wide
+kubectl get pods -o wide
 ```
 
 Earlier on we used a `port-forward` to send network traffic into the cluster. Even if we targetted a service resource the
@@ -1034,13 +1035,13 @@ Kubernetes setup needs an ingress setup and there is another workshop example co
 You can delete the initial custer by:
 
 ```console
-$ kind delete cluster
+kind delete cluster
 ```
 
 The latter multi node cluster can be deleted using:
 
 ```console
-$ ./delete_cluster.sh
+./delete_cluster.sh
 ```
 
 # Workshop Intentions
@@ -1060,6 +1061,6 @@ Please tell us your feedback for us to be able to make a better job the next tim
   - the notes and accompanying information?
 
 # Thank you
-If you wnat to know more about Cloud Native, Cloud Native Aalborg, Netic,kubernetes ot about the Secure Cloud Stack, please get in touch with us either in Netic, on Slack via Cloud Native Nordics or meet us in the Cloud Native Aalborg (or other cities) Meetups, or drop by for a cup of coffee (please write beforehand as we would like to be there on location).
+If you wnat to know more about Cloud Native and want to get together with other people sharing the desire to work with Cloud Native, Cloud Native Aalborg, Netic,kubernetes ot about the Secure Cloud Stack, please get in touch with us either in Netic, on Slack via Cloud Native Nordics or meet us in the Cloud Native Aalborg (or other cities) Meetups, or drop by for a cup of coffee (please write beforehand as we would like to be there on location).
 
 ## Peace
