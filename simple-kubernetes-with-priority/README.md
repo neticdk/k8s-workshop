@@ -11,7 +11,7 @@ We will use a kind cluster in this excercise, because it is easy to construct on
 Kind builds on docker and thus you should have docker installed an running.
 
 ```console
-$ kind create cluster --name priority --config=config.yaml
+kind create cluster --name priority --config=config.yaml
 ```
 
 ## Install ingress controller
@@ -24,14 +24,14 @@ infrastructures. Here we are running on a local machine and we will use nginx as
 To see what is actually contained in the definition of an ingress controller and install it:
 
 ```console
-$ cat ingress-controller.yaml 
-$ kubectl create -f ./ingress-controller.yaml
+cat ingress-controller.yaml 
+kubectl create -f ./ingress-controller.yaml
 ```
 
 Wait for deployment to be ready.
 
 ```console
-$ kubectl wait pod -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx,app.kubernetes.io/component=controller --for condition=Ready  --timeout=45s
+kubectl wait pod -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx,app.kubernetes.io/component=controller --for condition=Ready  --timeout=45s
 ```
 
 In the remaining parts of the workshop we will just use the default namespace for making it easier to write the commands you need to write.
@@ -53,13 +53,13 @@ description: "This is the higest an example of a Priority Class value"
 Assuming that the prioritisation classes are created in a `priority-classes.yaml` file, the installation is continued based on that assumption.
 
 ```console
-$ kubectl create -f ./priority-classes.yaml
+kubectl create -f ./priority-classes.yaml
 ```
 
 You can check the existence of the priority classes by:
 
 ```console
-$ kubectl get priorityclasses
+kubectl get priorityclasses
 ```
 
 You should see something along the lines of:
@@ -80,19 +80,19 @@ Or if they do not exist you workload would not be running anyway.
 Furthermore you can see that one of the ones you have crerated are default and that is the low one.
 
 ```console
-$ kubectl get priorityclasses -o yaml | grep preemptionPolicy
+kubectl get priorityclasses -o yaml | grep preemptionPolicy
 ```
 All the PriorityClasses are `preemptive` which can be seen from the `preemptionPolicy: PreemptLowerPriority` lines. That means that pods from lower priority may be evicted if there is a need for the resources used by lower priority pods, by higher priority pods. Then these higher priority pods will get scheduled where lower priority pods ran before.
 
 
 If you want tom see then in a prioritised way and use JQ for that(you have to install `jq`):
 ```console
-$ brew install jq
+brew install jq
 ```
 And then you can get the ouitput from the priority classes and sort then i prioritised sequence:
 
 ```console
-$ kubectl get priorityclasses -o json | jq '[ .items[] | { name: .metadata.name, priority: (.value|tonumber) }]  |  sort_by (.priority) | reverse' | jq -r ' .[] | .name +  " -  " + (.priority|tostring) '
+kubectl get priorityclasses -o json | jq '[ .items[] | { name: .metadata.name, priority: (.value|tonumber) }]  |  sort_by (.priority) | reverse' | jq -r ' .[] | .name +  " -  " + (.priority|tostring) '
 ```
 
 Where you should see something along the lines of:
@@ -111,7 +111,7 @@ The deployments are in each their separate file, as we are going to use then ind
 An application having a high priority assigned can be found in `deployment-high-prio`.
 
 ```console
-$ cat deployment-high-prio.yaml 
+cat deployment-high-prio.yaml 
 ```
 
 You should see:
@@ -161,7 +161,7 @@ Note that there is a `priorityClassName` set to `higest-priority`
 
 
 ```console
-$ cat deployment-no-prio.yaml 
+cat deployment-no-prio.yaml 
 ```
 
 You should see:
@@ -211,13 +211,13 @@ Note that there is no `priorityClassName` set.
 
 Progess to install the application with no priority:
 ```console
-$ kubectl create -f ./deployment-no-prio.yaml
+kubectl create -f ./deployment-no-prio.yaml
 ```
 
 Check that the priorityClassName has default been set to `lowest-priority`
 
 ```console
-$ kubectl get deployments/hello-foobar-app -o yaml | grep priorityClassName
+kubectl get deployments/hello-foobar-app -o yaml | grep priorityClassName
 ```
 and after that:
 
@@ -233,19 +233,19 @@ kubectl get pods -o wide
 They should be evenly distributed across nodes and therefore it is interesting to see the number of pods that can be contained (if room enough) on each node:
 
 ```console
-$ kubectl get nodes -o json | jq '.items | .[].status.allocatable.pods' 
+kubectl get nodes -o json | jq '.items | .[].status.allocatable.pods' 
 ```
 which in this case is 110 pods per node. 
 
 You want to know the number of pods running in the cluster in total, which means you need to find that number across namespaces:
 
 ```console
-$ kubectl get pods -A -o wide
+kubectl get pods -A -o wide
 ```
 Or if you have `jq` installed:
 
 ```console
-$ kubectl get pods -A -o json | jq '.items | length 
+kubectl get pods -A -o json | jq '.items | length 
 ```
 And you see that approximate 13 additional pods are running in the cluster.
 
@@ -254,26 +254,26 @@ You can scale the deploymentto a max by e.g. scaling the deployment to a large n
 However what you should expect is to see a much lower number of Pods being sheduled and allowing to run on the worker nodes.
 
 ```console
-$ kubectl scale --replicas=225 deployment/hello-foobar-app
+kubectl scale --replicas=225 deployment/hello-foobar-app
 ```
 
 The number of pods running:
 ```console
-$ kubectl get pods -A -o wide | grep -c Running
+kubectl get pods -A -o wide | grep -c Running
 ```
 
 Once that number stabilises you have reached the maximum number of running pods.
 There should still be Pemnding pods.
 
 ```console
-$ kubectl get pods -A -o wide | grep -c Pending
+kubectl get pods -A -o wide | grep -c Pending
 ```
 
 There should be pods pending in order to keep a maximum of pods deployet on the cluster, however more than 1-2 per node in pending is probably enough.
 We want to tailor the pods to being just above the thrreshold for the cluster.
 
 ```console
-$ kubectl get deployments/hello-foobar-app
+kubectl get deployments/hello-foobar-app
 ```
 
 where you can see that e.g.
@@ -285,11 +285,11 @@ hello-foobar-app   86/225   225          86          2m8s
 
 Lets just set it to 90 pods
 ```console
-$ kubectl scale --replicas=90 deployment/hello-foobar-app
+kubectl scale --replicas=90 deployment/hello-foobar-app
 ```
 
 ```console
-$ kubectl get deployments/hello-foobar-app
+kubectl get deployments/hello-foobar-app
 ```
 
 ```console
@@ -301,11 +301,11 @@ hello-foobar-app   86/90   90           86          2m51s
 If we deploy pods with a higher priority and have preemptive enabled as we have, we should see some pods being evicted and others being scheduled.
 
 ```console
-$ kubectl create -f ./deployment-medium-prio.yaml
+kubectl create -f ./deployment-medium-prio.yaml
 ```
 
 ```console
-$ kubectl get deployments/hello-foobar-app
+kubectl get deployments/hello-foobar-app
 ```
 
 ```console
@@ -316,7 +316,7 @@ hello-foobar-app   82/90   90           82          13m
 Which indicates that some pods have been evicted:
 
 ```console
-$ kubectl get deployments/hello-bar-app
+kubectl get deployments/hello-bar-app
 ```
 
 ```console
@@ -327,12 +327,12 @@ Shows that the four pods from `hello-foobar-app` was evicted to have 4 pods from
 So what happens when we want to deploy the deployment with the default low priority?
 
 ```console
-$ kubectl create -f ./deployment-low-prio.yaml
+kubectl create -f ./deployment-low-prio.yaml
 ```
 The deployment is created
 
 ```console
-$ kubectl get deployments/hello-baz-app
+kubectl get deployments/hello-baz-app
 ```
 
 ```console
@@ -344,11 +344,11 @@ We see that the deployment is ok, however none of the Pods are running - no room
 Lets do the same for the highest priority deployment.
 
 ```console
-$ kubectl create -f ./deployment-high-prio.yaml
+kubectl create -f ./deployment-high-prio.yaml
 ```
 
 ```console
-$ kubectl get deployments/hello-foo-app
+kubectl get deployments/hello-foo-app
 ```
 
 ```console
@@ -357,7 +357,7 @@ hello-foo-app   2/2     2            2           18s
 ```
 
 ```console
-$ kubectl get deployments
+kubectl get deployments
 ```
 
 ```console
@@ -396,17 +396,17 @@ spec:
 ```
 We create these two podDisruptionBudgets:
 ```console
-$ kubectl create -f ./poddisruptionbudgets.yaml 
+kubectl create -f ./poddisruptionbudgets.yaml 
 ```
 
 And we will create the applications using them
 
 ```console
-$ kubectl create -f ./deployment-high-prio-pdb.yaml 
+kubectl create -f ./deployment-high-prio-pdb.yaml 
 ```
 
 ```console
-$ kubectl get deployments                           
+kubectl get deployments                           
 ```
 ```console
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
@@ -420,11 +420,11 @@ hello-foobar-app    80/90   90           80          15m
 Lets scale that last deployment:
 
 ```console
-$ kubectl scale --replicas=80 deployment/hello-foo-pdb-app
+kubectl scale --replicas=80 deployment/hello-foo-pdb-app
 ```
 
 ```console
-$ kubectl get deployments
+kubectl get deployments
 ```
 
 ```console
@@ -437,11 +437,11 @@ hello-foobar-app    48/90   90           48          17m
 ```
 
 ```console
-$ kubectl create -f ./deployment-medium-prio-pbd.yaml
+kubectl create -f ./deployment-medium-prio-pbd.yaml
 ```
 
 ```console
-$ kubectl get deployments 
+kubectl get deployments 
 ```
 ```console
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
@@ -455,11 +455,11 @@ hello-foobar-app    42/90   90           42          17m
 
 Lets scale the medium one with PodDisruptionBudgets
 ```console
-$ kubectl scale --replicas=80 deployment/hello-bar-pdb-app
+kubectl scale --replicas=80 deployment/hello-bar-pdb-app
 ```
 
 ```console
-$ kubectl get deployments 
+kubectl get deployments 
 ```
 ```console
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
@@ -473,15 +473,15 @@ hello-foobar-app    0/90    90           0           19m
 
 If we scale scale all the deployments to 80 pods
 ```console
-$ kubectl scale --replicas=80 deployment/hello-foo-pdb-app 
-$ kubectl scale --replicas=80 deployment/hello-foo-app 
-$ kubectl scale --replicas=80 deployment/hello-bar-app
-$ kubectl scale --replicas=80 deployment/hello-baz-app 
-$ kubectl scale --replicas=80 deployment/hello-foobar-app
+kubectl scale --replicas=80 deployment/hello-foo-pdb-app 
+kubectl scale --replicas=80 deployment/hello-foo-app 
+kubectl scale --replicas=80 deployment/hello-bar-app
+kubectl scale --replicas=80 deployment/hello-baz-app 
+kubectl scale --replicas=80 deployment/hello-foobar-app
 ```
 
 ```console
-$ kubectl get deployments                                        
+kubectl get deployments                                        
 ```
 ```console
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
@@ -497,11 +497,11 @@ We see that the high priority pods are complete, however the lower priorities ar
 Lets turn the nob for high priority workloads to see how the prioritation works. we scale the higher priority pods to a larger number.
 
 ```console
-$ kubectl scale --replicas=105 deployment/hello-foo-pdb-app
+kubectl scale --replicas=105 deployment/hello-foo-pdb-app
 ```
 
 ```console
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       3/80      80           3           23m
 hello-bar-pdb-app   6/80      80           6           19m
@@ -514,9 +514,9 @@ hello-foobar-app    0/80      80           0           36m
 Lets find the point where we force kubernetes to make a decision.
 
 ```console
-$ kubectl scale --replicas=108 deployment/hello-foo-pdb-app
+kubectl scale --replicas=108 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       3/80      80           3           25m
 hello-bar-pdb-app   4/80      80           4           20m
@@ -528,9 +528,9 @@ hello-foobar-app    0/80      80           0           38m
 Still within the PodDisruptionBudget limit where minAvailable was set to 3 for `hello-bar-pdb-app`
 
 ```console
-$ kubectl scale --replicas=110 deployment/hello-foo-pdb-app 
+kubectl scale --replicas=110 deployment/hello-foo-pdb-app 
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       3/80      80           3           25m
 hello-bar-pdb-app   3/80      80           3           21m
@@ -544,9 +544,9 @@ Which means is we demand further scaling for higher priority pods, kubernetes ca
 
 
 ```console
-$ kubectl scale --replicas=111 deployment/hello-foo-pdb-app
+kubectl scale --replicas=111 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       3/80      80           3           25m
 hello-bar-pdb-app   2/80      80           2           21m
@@ -562,9 +562,9 @@ One might have expected that the `hello-bar-app` was chosen over the `hello-bar-
 One could have expected that `hello-bar-app ` was 2 at this point and `hello-bar-pdb-app` was 3.
 
 ```console
-$ kubectl scale --replicas=112 deployment/hello-foo-pdb-app 
+kubectl scale --replicas=112 deployment/hello-foo-pdb-app 
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       2/80      80           2           26m
 hello-bar-pdb-app   2/80      80           2           21m
@@ -578,9 +578,9 @@ Kubernetes tries to keep both workloads running by balancing the number of pods 
 One could have expected that `hello-bar-app ` was 1 at this point and `hello-bar-pdb-app` was 3.
 
 ```console
-$ kubectl scale --replicas=114 deployment/hello-foo-pdb-app 
+kubectl scale --replicas=114 deployment/hello-foo-pdb-app 
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       2/80      80           2           26m
 hello-bar-pdb-app   1/80      80           1           22m
@@ -594,9 +594,9 @@ Now we are well below the PodDisruptionBudget limit where minAvailable was set t
 One could have expected that `hello-bar-app ` was 0? at this point and `hello-bar-pdb-app` was 3? - however how should kubernetes know, they have the same priority.
 
 ```console
-$ kubectl scale --replicas=115 deployment/hello-foo-pdb-app
+kubectl scale --replicas=115 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       2/80      80           2           26m
 hello-bar-pdb-app   0/80      80           0           22m
@@ -612,9 +612,9 @@ Below we continue to increrase the number of pods that is desired to get running
 Scale to 117
 
 ```console
-$ kubectl scale --replicas=117 deployment/hello-foo-pdb-app
+kubectl scale --replicas=117 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       1/80      80           1           52m
 hello-bar-pdb-app   0/80      80           0           47m
@@ -626,9 +626,9 @@ hello-foobar-app    0/80      80           0           65m
 Scale to 118
 
 ```console
-$ kubectl scale --replicas=118 deployment/hello-foo-pdb-app
+kubectl scale --replicas=118 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       1/80      80           1           52m
 hello-bar-pdb-app   0/80      80           0           48m
@@ -640,9 +640,9 @@ hello-foobar-app    0/80      80           0           65m
 Scale to 119
 
 ```console
-$ kubectl scale --replicas=119 deployment/hello-foo-pdb-app
+kubectl scale --replicas=119 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       0/80      80           0           53m
 hello-bar-pdb-app   0/80      80           0           49m
@@ -655,9 +655,9 @@ hello-foobar-app    0/80      80           0           66m
 Scale to 120
 
 ```console
-$ kubectl scale --replicas=120 deployment/hello-foo-pdb-app
+kubectl scale --replicas=120 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       0/80      80           0           54m
 hello-bar-pdb-app   0/80      80           0           50m
@@ -670,9 +670,9 @@ hello-foobar-app    0/80      80           0           67m
 Scale to 121
 
 ```console
-$ kubectl scale --replicas=121 deployment/hello-foo-pdb-app
+kubectl scale --replicas=121 deployment/hello-foo-pdb-app
 deployment.apps/hello-foo-pdb-app scaled
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       0/80      80           0           56m
 hello-bar-pdb-app   0/80      80           0           51m
@@ -689,14 +689,14 @@ Looking at the results from above you can see how kubernetes priotises and what 
 Scale the applications down:
 
 ```console
-$ kubectl scale --replicas=12 deployment/hello-foo-pdb-app
-$ kubectl scale --replicas=10 deployment/hello-foo-app
-$ kubectl scale --replicas=8 deployment/hello-bar-app
-$ kubectl scale --replicas=6 deployment/hello-bar-pdb-app
-$ kubectl scale --replicas=80 deployment/hello-baz-app
-$ kubectl scale --replicas=80 deployment/hello-foobar-app
+kubectl scale --replicas=12 deployment/hello-foo-pdb-app
+kubectl scale --replicas=10 deployment/hello-foo-app
+kubectl scale --replicas=8 deployment/hello-bar-app
+kubectl scale --replicas=6 deployment/hello-bar-pdb-app
+kubectl scale --replicas=80 deployment/hello-baz-app
+kubectl scale --replicas=80 deployment/hello-foobar-app
 
-$ kubectl get deployments
+kubectl get deployments
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       8/8     8            8           92m
 hello-bar-pdb-app   6/6     6            6           87m
@@ -712,18 +712,18 @@ By the way would it be interesting to know how the prioritisation looks at the c
 lets us look at the running pods
 
 ```console
-$ kubectl get pods
+kubectl get pods
 ```
 
 ```console
-$ kubectl get pods hello-foo-pdb-app-7bbcb979bb-4b4jq -o yaml | grep cpu
+kubectl get pods hello-foo-pdb-app-7bbcb979bb-4b4jq -o yaml | grep cpu
         cpu: 90m   
         cpu: 80m
 ```
 or:
 
 ```console
-$ kubectl get pods hello-foo-pdb-app-7bbcb979bb-4b4jq -o json | jq '.spec.containers | .[].resources'
+kubectl get pods hello-foo-pdb-app-7bbcb979bb-4b4jq -o json | jq '.spec.containers | .[].resources'
 ```
 ```json
 {
@@ -740,14 +740,14 @@ $ kubectl get pods hello-foo-pdb-app-7bbcb979bb-4b4jq -o json | jq '.spec.contai
 Which means that it requests 80 milli core cpu and has a limit of 90 milli core, lets see how that is reflected in the control groups information and thus seen from the operating system under kubernetes:
 
 ```console
-$ kubectl exec hello-foo-pdb-app-7bbcb979bb-4b4jq -c hello-foo-pdb-app -- cat /sys/fs/cgroup/cpu.max
+kubectl exec hello-foo-pdb-app-7bbcb979bb-4b4jq -c hello-foo-pdb-app -- cat /sys/fs/cgroup/cpu.max
 9000 100000
 ```
 This means the os allows this container to use maximum 9000/100000 which equals 90 milli cores.
 
 What about the request then?
 ```console
-$ kubectl exec hello-foo-pdb-app-7bbcb979bb-4b4jq -c hello-foo-pdb-app -- cat /sys/fs/cgroup/cpu.weight  
+kubectl exec hello-foo-pdb-app-7bbcb979bb-4b4jq -c hello-foo-pdb-app -- cat /sys/fs/cgroup/cpu.weight  
 4
 ``````
 This pod container has a weight at the os level of 4, this should be seen together with the weight other pod containers would have.
@@ -770,15 +770,15 @@ kubectl get pods hello-bar-pdb-app-5f9d4787f6-2n5vb -o json | jq '.spec.containe
 ```
 
 ```console
-$ kubectl exec hello-bar-pdb-app-5f9d4787f6-2n5vb -c hello-bar-pdb-app -- cat /sys/fs/cgroup/cpu.max
+kubectl exec hello-bar-pdb-app-5f9d4787f6-2n5vb -c hello-bar-pdb-app -- cat /sys/fs/cgroup/cpu.max
 12500 100000
-$ kubectl exec hello-bar-pdb-app-5f9d4787f6-2n5vb -c hello-bar-pdb-app -- cat /sys/fs/cgroup/cpu.weight  
+kubectl exec hello-bar-pdb-app-5f9d4787f6-2n5vb -c hello-bar-pdb-app -- cat /sys/fs/cgroup/cpu.weight  
 5
 ```
 
 
 ```console
-$ kubectl get pods hello-foobar-app-76fd9fc6cb-6w46d -o json | jq '.spec.containers | .[].resources'
+kubectl get pods hello-foobar-app-76fd9fc6cb-6w46d -o json | jq '.spec.containers | .[].resources'
 ```
 ```json
 {
@@ -794,17 +794,17 @@ $ kubectl get pods hello-foobar-app-76fd9fc6cb-6w46d -o json | jq '.spec.contain
 ```
 
 ```console
-$ kubectl exec hello-foobar-app-76fd9fc6cb-6w46d -c hello-foobar-app -- cat /sys/fs/cgroup/cpu.max
+kubectl exec hello-foobar-app-76fd9fc6cb-6w46d -c hello-foobar-app -- cat /sys/fs/cgroup/cpu.max
 50500 100000
-$ kubectl exec hello-foobar-app-76fd9fc6cb-6w46d -c hello-foobar-app -- cat /sys/fs/cgroup/cpu.weight  
+kubectl exec hello-foobar-app-76fd9fc6cb-6w46d -c hello-foobar-app -- cat /sys/fs/cgroup/cpu.weight  
 8
 ```
 So we see the weigth is proportional to the amount of cpu requested and the limit is set at the OS level.
 What if the limits are not set, how would that look?
 
 ```console
-$ kubectl create -f ./deployment-high-prio-nolimit.yaml
-$ kubectl get pods hello-foo-app-nl-769d648d56-jnv9t -o json | jq '.spec.containers | .[].resources 
+kubectl create -f ./deployment-high-prio-nolimit.yaml
+kubectl get pods hello-foo-app-nl-769d648d56-jnv9t -o json | jq '.spec.containers | .[].resources 
 ```
 ```json
 {
@@ -818,9 +818,9 @@ $ kubectl get pods hello-foo-app-nl-769d648d56-jnv9t -o json | jq '.spec.contain
 }
 ```
 ```console
-$ kubectl exec hello-foo-app-nl-769d648d56-jnv9t -c hello-foo-app-nl -- cat /sys/fs/cgroup/cpu.max 
+kubectl exec hello-foo-app-nl-769d648d56-jnv9t -c hello-foo-app-nl -- cat /sys/fs/cgroup/cpu.max 
 max 100000
-$ kubectl exec hello-foo-app-nl-769d648d56-jnv9t -c hello-foo-app-nl -- cat /sys/fs/cgroup/cpu.weight  
+kubectl exec hello-foo-app-nl-769d648d56-jnv9t -c hello-foo-app-nl -- cat /sys/fs/cgroup/cpu.weight  
 110
 ```
 
@@ -831,18 +831,18 @@ Now lets try to make the experiment from before a little different where we crea
 Making sure there is room enough for kubernetes to favior the `PodDisruptionBudgets` of the same priority.
 
 ```console
-$ kubectl scale --replicas=80 deployment/hello-foo-app 
-$ kubectl scale --replicas=105 deployment/hello-foo-pdb-app 
-$ kubectl scale --replicas=3 deployment/hello-bar-app
-$ kubectl scale --replicas=6 deployment/hello-bar-pdb-app
-$ kubectl scale --replicas=10 deployment/hello-baz-app 
-$ kubectl scale --replicas=10 deployment/hello-foobar-app
+kubectl scale --replicas=80 deployment/hello-foo-app 
+kubectl scale --replicas=105 deployment/hello-foo-pdb-app 
+kubectl scale --replicas=3 deployment/hello-bar-app
+kubectl scale --replicas=6 deployment/hello-bar-pdb-app
+kubectl scale --replicas=10 deployment/hello-baz-app 
+kubectl scale --replicas=10 deployment/hello-foobar-app
 ```
 
 We see the equilibrium below, the medium and high priority workloads are balanced.
 
 ```console
-$ kubectl get deployments                             
+kubectl get deployments                             
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       3/3       3            3           25h
 hello-bar-pdb-app   6/6       6            6           25h
@@ -855,8 +855,8 @@ hello-foobar-app    0/10      10           0           25h
 From before we saw that the point where it had to decide between the workloads having a pdb and not it chose the scaledown of the pdb, however there are another option that may come into play at this stage. The size of the workload, the idea is thus to scale more drastically in order to let free size be a non-factor in the sceduling.
 
 ```console
-$ kubectl scale --replicas=112 deployment/hello-foo-pdb-app
-$ kubectl get deployments           
+kubectl scale --replicas=112 deployment/hello-foo-pdb-app
+kubectl get deployments           
 NAME                READY     UP-TO-DATE   AVAILABLE   AGE
 hello-bar-app       3/3       3            3           25h
 hello-bar-pdb-app   1/6       6            1           25h
@@ -872,12 +872,12 @@ We see that kubernetes would have had the choice for selecting the one without a
 Rebalance the setup:
 
 ```console
-$ kubectl scale --replicas=12 deployment/hello-foo-pdb-app
-$ kubectl scale --replicas=10 deployment/hello-foo-app
-$ kubectl scale --replicas=8 deployment/hello-bar-app
-$ kubectl scale --replicas=6 deployment/hello-bar-pdb-app
-$ kubectl scale --replicas=80 deployment/hello-baz-app
-$ kubectl scale --replicas=80 deployment/hello-foobar-app
+kubectl scale --replicas=12 deployment/hello-foo-pdb-app
+kubectl scale --replicas=10 deployment/hello-foo-app
+kubectl scale --replicas=8 deployment/hello-bar-app
+kubectl scale --replicas=6 deployment/hello-bar-pdb-app
+kubectl scale --replicas=80 deployment/hello-baz-app
+kubectl scale --replicas=80 deployment/hello-foobar-app
 ```
 
 ## Install the services for the applications
@@ -885,25 +885,25 @@ $ kubectl scale --replicas=80 deployment/hello-foobar-app
 Take a look at the services, which are in front of the applications.
 
 ```console
-$ cat services.yaml
+cat services.yaml
 ```
 
 Then install the services.
 
 ```console
-$ kubectl create -f ./services.yaml
+kubectl create -f ./services.yaml
 ```
 
 ## Install the ingress for the services
 Take a look at the local ingress definition for the services, where you will find 3 definitions. Two of these for `foo` and `bar` and one to use in a while called `baz`.
 
 ```console
-$ cat ingress.yaml 
+cat ingress.yaml 
 ```
 Lets us install the ingress
 
 ```console
-$ kubectl create -f ./ingress.yaml
+kubectl create -f ./ingress.yaml
 ```
 
 ## Accessing the Application
@@ -911,26 +911,26 @@ Now when you access the application it is possible to use the Ingress Controller
 
 To get the `hello-bar` application
 ```console
-$ curl localhost/hello-bar/hostname
+curl localhost/hello-bar/hostname
 ```
 which takes you through the `hello-ingress` ingress to the `hello-bar-service` service to the `hello-bar-app` pod.
 
 To get the `hello-foo` application
 ```console
-$ curl localhost/hello-foo/hostname
+curl localhost/hello-foo/hostname
 ```
 which takes you through the `hello-ingress` ingress to the `hello-foo-service` service to the `hello-foo-app` pod
 
 To get the `hello-baz` application 
 ```console
-$ curl localhost/hello-baz/hostname
+curl localhost/hello-baz/hostname
 ```
 
 which takes you through the `hello-ingress` ingress through the `hello-baz-service` service to the `hello-baz-app` pods. The
 `hello-baz-app` deployment contains 4 replicas. Try calling the hello-baz application several times using:
 
 ```console
-$ curl localhost/hello-baz/hostname
+curl localhost/hello-baz/hostname
 ```
 
 and see that it returns different names, which informs you that traffic is sent to different pods, i.e., the loadbalancing
@@ -940,13 +940,13 @@ This means you now have an application deployed across "nodes" and you receive t
 You can see that by examininig the names of the pods responding and knowing how these are distributed across "nodes" in the cluster:
 
 ```console
-$ kubectl get pods -o wide
+kubectl get pods -o wide
 ```
 
 Or if you want to see the baz app isolated:
 
 ```console
-$ kubectl get pods -o wide | grep baz
+kubectl get pods -o wide | grep baz
 ````
 
 ## Virtual Hosting
@@ -956,24 +956,24 @@ http request (hello-foo, hello-bar, hello-baz). The same ingress controller can 
 requested hostname. There is an example of this in the `multiple-domains` folder - take a look at the ingress resource.
 
 ```console
-$ cat multiple-domains/ingress.yaml
+cat multiple-domains/ingress.yaml
 ```
 
 and apply the specification:
 
 ```console
-$ kubectl apply -f ./multiple-domains/ingress.yaml
+kubectl apply -f ./multiple-domains/ingress.yaml
 ```
 
 Now check the response when calling using different hostnames:
 
 ```console
-$ curl foo-127-0-0-1.nip.io/hostname
-$ curl foopdb-127-0-0-1.nip.io/hostname
-$ curl bar-127-0-0-1.nip.io/hostname
-$ curl barpdb-127-0-0-1.nip.io/hostname
-$ curl baz-127-0-0-1.nip.io/hostname
-$ curl foobar-127-0-0-1.nip.io/hostname
+curl foo-127-0-0-1.nip.io/hostname
+curl foopdb-127-0-0-1.nip.io/hostname
+curl bar-127-0-0-1.nip.io/hostname
+curl barpdb-127-0-0-1.nip.io/hostname
+curl baz-127-0-0-1.nip.io/hostname
+curl foobar-127-0-0-1.nip.io/hostname
 ```
 
 _Note_ the three domains (foo-127-0-0-1.nip.io, foo-127-0-0-1.nip.io, foo-127-0-0-1.nip.io) all resolve to `127.0.0.1` (i.e., localhost) but the ingress controller will route based on the http host header.
