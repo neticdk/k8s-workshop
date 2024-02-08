@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Playground</title>
+
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="/js/CodeMirror/lib/codemirror.css">
+    <script src="/js/js-yaml.min.js"></script>
+    <script src="/js/CodeMirror/lib/codemirror.js"></script>
+    <script src="/js/CodeMirror/mode/yaml/yaml.js"></script>
+    <script src="/js/CodeMirror/addon/edit/matchbrackets.js"></script>
+    <script src="/js/codemirror-mode-jsonnet.js"></script>
+
+    <script src="js/wasm_exec.js"></script>
+    <script>
+        if (!WebAssembly.instantiateStreaming) {
+            // This function was observed to be missing on Safari 14.
+            WebAssembly.instantiateStreaming = async (resp, importObject) => {
+                const source = await (await resp).arrayBuffer();
+                return await WebAssembly.instantiate(source, importObject);
+            };
+        }
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("js/libjsonnet.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+    </script>
+</head>
+
+<body style="font-family: Verdana, Geneva, Tahoma, sans-serif;">
+    <h1>Playground</h1>
+    <div style="display: flex; width: 100%;">
+        <div style="width: 50%;">
+            <h2>Jsonnet</h2>
+            <textarea id="jsonnet"></textarea>
+        </div>
+        <div style="width: 50%;">
+            <h2>JSON</h2>
+            <textarea readonly="readonly" id="json-output"></textarea>
+        </div>
+    </div>
+    <pre id="message"></pre>
+    <script>
+        let jsonnetCodeMirror = CodeMirror.fromTextArea(document.getElementById('jsonnet'), {
+            lineNumbers: true,
+            mode: { name: 'jsonnet' },
+        });
+
+        let jsonCodeMirror = CodeMirror.fromTextArea(document.getElementById('json-output'), {
+            lineNumbers: true,
+            mode: { name: 'jsonnet' },
+            readOnly: true,
+        });
+
+        async function load_data(input) {
+            jsonnet_evaluate_snippet('input.jsonnet', input, { 'input.jsonner': input }, {}, {}, {}, {})
+                .then((json) => {
+                    document.getElementById('message').innerText = '';
+                    jsonCodeMirror.setValue(json);
+                })
+                .catch((e) => {
+                    document.getElementById('message').innerText = e;
+                });
+        }
+
+        jsonnetCodeMirror.on('changes', (changes) => {
+            load_data(jsonnetCodeMirror.getValue());
+        })
+    </script>
+</body>
+
+</html>
