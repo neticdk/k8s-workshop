@@ -1,6 +1,6 @@
 # Workshop with Kubernetes
 Welcome to this workshop. 
-The workshop is associated with a [slide deck](https://drive.google.com/file/d/1nX49RxklmrzcCqSQNw24ihxxZS7zx3yb/view?usp=sharing).
+The workshop is associated with a [slide deck](https://drive.google.com/file/d/1SUyXwHb4rnf6LD9Rf9Gfp3BJCXlcziwr/view?usp=sharing).
 Material used in the workshop is based on different examples from github, articles and kubernetes.io
 
 ## Agenda
