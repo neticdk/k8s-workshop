@@ -1,4 +1,4 @@
-FROM alpine:3@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c
+FROM alpine:3@sha256:6662067ba6f090f8a2c8b5b50309692be03bffef2729b453425edd4f26343377
 
 RUN apk add --no-cache \
   openssh \
